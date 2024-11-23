@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.SequentialAction;
+import com.acmerobotics.roadrunner.ftc.LazyImu;
 import com.arcrobotics.ftclib.drivebase.MecanumDrive;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
@@ -11,6 +12,8 @@ import com.qualcomm.hardware.adafruit.AdafruitBNO055IMU;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.IMU;
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
@@ -32,15 +35,29 @@ public class SampleTeleOp extends LinearOpMode {
     double imuWrap = 0;
     private List<Action> runningActions = new ArrayList<>();
 
+    public LazyImu lazyImu;
+
+    public static org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive.Params PARAMS = new org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive.Params();
+
     //start of opmode, inside this function will be your main while loop and initialize all hardware objects
     @Override
     public void runOpMode() {
+        //New LazyIMU
+        lazyImu = new LazyImu(hardwareMap, "imu", new RevHubOrientationOnRobot(PARAMS.logoFacingDirection, PARAMS.usbFacingDirection));
 
         //IMU intialization, you will need to change this to  match your imu
-            imu = hardwareMap.get(AdafruitBNO055IMU.class, "imu");
+            /*imu = hardwareMap.get(AdafruitBNO055IMU.class, "imu");
             BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
             parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
-            imu.initialize(parameters);
+            imu.initialize(parameters);*/
+        // Retrieve the IMU from the hardware map
+        /*IMU imu = hardwareMap.get(IMU.class, "imu");
+        // Adjust the orientation parameters to match your robot
+        IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
+                RevHubOrientationOnRobot.LogoFacingDirection.UP,
+                RevHubOrientationOnRobot.UsbFacingDirection.LEFT));
+        // Without this, the REV Hub's orientation is assumed to be logo up / USB forward
+        imu.initialize(parameters);*/
 
         //initialize motors, you will need to change these parameters to match your motor setup and names.
             Motor leftFront = new Motor(hardwareMap, "leftFront", Motor.GoBILDA.RPM_312);
@@ -71,13 +88,13 @@ public class SampleTeleOp extends LinearOpMode {
 
 
         //initialize claw servo object from our mechanisms file
-            Mechanisms.Claw claw = new Mechanisms.Claw(hardwareMap);
+            //Mechanisms.Claw claw = new Mechanisms.Claw(hardwareMap);
 
         //initialize lift motor object from our mechanimsms file
-            Mechanisms.Lift lift = new Mechanisms.Lift(hardwareMap);
+            //Mechanisms.Lift lift = new Mechanisms.Lift(hardwareMap);
 
         //intialize intake motor from our mechanisms file
-            Mechanisms.Intake intake = new Mechanisms.Intake(hardwareMap);
+            //Mechanisms.Intake intake = new Mechanisms.Intake(hardwareMap);
 
 
         //wait for the driver station to start
@@ -108,12 +125,12 @@ public class SampleTeleOp extends LinearOpMode {
             //example of claw control
                 if (driver1.getButton(GamepadKeys.Button.A)) {
                     runningActions.add(new SequentialAction(
-                            claw.openClaw()
+                            //claw.openClaw()
                     ));
                     }
                 else if (driver1.getButton(GamepadKeys.Button.B)) {
                     runningActions.add(new SequentialAction(
-                            claw.closeClaw()
+                            //claw.closeClaw()
                     ));
                     }
 
@@ -121,12 +138,12 @@ public class SampleTeleOp extends LinearOpMode {
                 //can use .wasJustPressed because the lift target position only needs to change once.
                     if(driver1.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER)) {
                         runningActions.add(new SequentialAction(
-                                lift.liftUp()
+                                //lift.liftUp()
                         ));
                         }
                     else if (driver1.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER)) {
                         runningActions.add(new SequentialAction(
-                                lift.liftDown()
+                                //lift.liftDown()
                         ));
                         }
 
@@ -135,20 +152,20 @@ public class SampleTeleOp extends LinearOpMode {
                     if(driver1.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.1) {
                             //call the spin intake forward function
                         runningActions.add(new SequentialAction(
-                                intake.spinForward()
+                                //intake.spinForward()
                         ));
                         }
                     else if(driver1.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.1) {
                             //call the spin intake backward function
                         runningActions.add(new SequentialAction(
-                                intake.spinBackward()
+                                //intake.spinBackward()
                         ));
                         }
 
 
             /*Code to automatically reset the imu to the last known setting if it gets reset because of static.
             I highly recommend leaving this unchanged unless you know what you're doing*/
-
+            /*
             //get imu value as a variable
                 imuValue = imu.getAngularOrientation().firstAngle + imuDifference;
             //find difference between current and previous values, wrapped around 360
@@ -173,7 +190,7 @@ public class SampleTeleOp extends LinearOpMode {
                     prevImuValue = 0;
                     imuDifference = 0;
                 }
-
+            */
             /*call our mecanum drive function from ftclib using field centric control,
             if you want robotcentric, change "Field" to "Robot" and remove the imuValue variable,
             if you want exponential drive turned off, change the last variable to false*/
@@ -181,7 +198,7 @@ public class SampleTeleOp extends LinearOpMode {
                         driver1.getLeftX(),
                         driver1.getLeftY(),
                         driver1.getRightX(),
-                        imuValue,
+                        lazyImu.get().getRobotYawPitchRollAngles().getYaw(),
                         true
                     );
         }

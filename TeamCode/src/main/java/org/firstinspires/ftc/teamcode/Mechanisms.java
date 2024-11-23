@@ -7,8 +7,100 @@ import com.acmerobotics.roadrunner.Action;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.CRServo;
 
 public class Mechanisms {
+
+    //class to create a wrist
+    public static class Wrist {
+        private Servo wrist;
+        //create the claw object from hardware map
+
+        public Wrist(HardwareMap hardwareMap) {
+            wrist = hardwareMap.get(Servo.class, "wrist");
+        }
+
+        //implement action class in our close claw function.
+
+        public class FoldInWrist implements Action {
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                //when closeclaw is run, set the claw to closed position
+                wrist.setPosition(0);
+                return false;
+            }
+        }
+        //allow the function to be able to called from other files
+        public Action foldInWrist() {
+            return new Wrist.FoldInWrist();
+        }
+        //create an foldinwrist function by implementing action class
+
+        public class FoldOutWrist implements Action {
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                //when openclaw is run, set the claw to the open position
+                wrist.setPosition(0.38);
+                return false;
+            }
+        }
+        //allow the function to be able to be called from other files
+        public Action foldOutWrist() {
+            return new Wrist.FoldOutWrist();
+        }
+    }
+
+    public static class Intake {
+        private CRServo intake;
+        //create the claw object from hardware map
+
+        public Intake(HardwareMap hardwareMap) {
+            intake = hardwareMap.get(CRServo.class, "intake");
+        }
+
+        //implement action class in our intake collect function.
+
+        public class IntakeCollect implements Action {
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                //when closeclaw is run, set the claw to closed position
+                intake.setPower(1);
+                return false;
+            }
+        }
+        //allow the function to be able to called from other files
+        public Action intakeCollect() {
+            return new Intake.IntakeCollect();
+        }
+        //create an intakecollect function by implementing action class
+
+        public class IntakeOff implements Action {
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                //when openclaw is run, set the claw to the open position
+                intake.setPower(0);
+                return false;
+            }
+        }
+        //allow the function to be able to be called from other files
+        public Action intakeOff() {
+            return new Intake.IntakeOff();
+        }
+
+        public class IntakeDeposit implements Action {
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                //when openclaw is run, set the claw to the open position
+                intake.setPower(-0.5);
+                return false;
+            }
+        }
+        //allow the function to be able to be called from other files
+        public Action intakeDeposit() {
+            return new Intake.IntakeDeposit();
+        }
+    }
+
     //class to create a claw
     public static class Claw {
         private Servo claw;
@@ -45,6 +137,92 @@ public class Mechanisms {
         //allow the function to be able to be called from other files
         public Action openClaw() {
             return new Claw.OpenClaw();
+        }
+    }
+
+    //Robot Arm
+    public static class Arm {
+        final double ARM_TICKS_PER_DEGREE =
+                28 // number of encoder ticks per rotation of the bare motor
+                        * 250047.0 / 4913.0 // This is the exact gear ratio of the 50.9:1 Yellow Jacket gearbox
+                        * 100.0 / 20.0 // This is the external gear reduction, a 20T pinion gear that drives a 100T hub-mount gear
+                        * 1/360.0; // we want ticks per degree, not per rotation
+        private Motor arm;
+        //create lift from hardwaremap and initialize it
+
+        public Arm(HardwareMap hardwareMap) {
+            //initialize our lift from hardwareMap
+            arm = new Motor(hardwareMap, "left_arm", Motor.GoBILDA.RPM_117);
+            //set the braking mode to brake when theres no power given so it better holds target position
+            arm.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
+            //put it into position control so it automatically flips direction
+            arm.setRunMode(Motor.RunMode.PositionControl);
+            //set the lift motor direction
+            //arm.setInverted(true);
+            //set position coefficient of the lift, (p value)
+            arm.setPositionCoefficient(0.001);
+        }
+
+        public class ArmScoreLow implements Action {
+            // checks if the lift motor has been powered on
+            private boolean initialized = false;
+            // actions are formatted via telemetry packets as below
+
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                // powers on motor, if it is not on
+                if (!initialized) {
+                    arm.set(0.8);
+                    initialized = true;
+                }
+                //set the target position of the lift to 3000 ticks
+                arm.setTargetPosition((int) (150*ARM_TICKS_PER_DEGREE));
+                if (!arm.atTargetPosition()) {
+                    // true causes the action to rerun
+                    return true;
+                } else {
+                    // false stops action rerun and stops the lift
+                    arm.set(0);
+                    return false;
+                }
+                // overall, the action powers the lift until it surpasses
+                // 3000 encoder ticks, then powers it off2
+            }
+        }
+        public Action armScoreLow() {
+            return new ArmScoreLow();
+        }
+
+        public class ArmCollapse implements Action {
+            // checks if the lift motor has been powered on
+            private boolean initialized = false;
+            // actions are formatted via telemetry packets as below
+
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                //set the lifts target position to down position
+                arm.setTargetPosition(0);
+                // powers on motor, if it is not on
+                if (!initialized) {
+                    arm.set(-0.8);
+                    initialized = true;
+                }
+
+                //if the lift isn't at the target position then repeat the loop
+                if (!arm.atTargetPosition()) {
+                    // true causes the action to rerun
+                    return true;
+                } else {
+                    // false stops action rerun and stops the lift
+                    arm.set(0);
+                    return false;
+                }
+                // overall, the action powers the lift down until it goes below
+                // 100 encoder ticks, then powers it off
+            }
+        }
+        public Action armCollapse(){
+            return new ArmCollapse();
         }
     }
 
@@ -128,7 +306,7 @@ public class Mechanisms {
             return new LiftDown();
         }
     }
-    public static class Intake {
+    /*public static class Intake {
         private Motor intake;
         //create the claw object from hardware map
 
@@ -171,5 +349,5 @@ public class Mechanisms {
         public Action spinBackward() {
             return new Intake.spinBackward();
         }
-    }
+    }*/
 }
