@@ -73,6 +73,8 @@ public class SampleTeleOp extends LinearOpMode {
         //reverse motors
             leftFront.setInverted(true);
             leftBack.setInverted(true);
+            rightFront.setInverted(true);
+            rightBack.setInverted(true);
 
         //initialize our mecanum drive from ftclib
             com.arcrobotics.ftclib.drivebase.MecanumDrive drive = new MecanumDrive(
@@ -121,6 +123,10 @@ public class SampleTeleOp extends LinearOpMode {
             //read controller buttons
                 driver1.readButtons();
                 driver2.readButtons();
+
+                if (driver1.wasJustPressed(GamepadKeys.Button.START)){
+                    lazyImu.get().resetYaw();
+                }
 
             //example of claw control
                 if (driver1.getButton(GamepadKeys.Button.A)) {
@@ -182,7 +188,7 @@ public class SampleTeleOp extends LinearOpMode {
                 }
                 prevImuValue = imuValue;
 
-
+            */
             //Code to manually reset the imu, you can change this to whatever button you want
                 if (driver1.getButton(GamepadKeys.Button.DPAD_DOWN)) {
                     imu.initialize();
@@ -190,7 +196,6 @@ public class SampleTeleOp extends LinearOpMode {
                     prevImuValue = 0;
                     imuDifference = 0;
                 }
-            */
             /*call our mecanum drive function from ftclib using field centric control,
             if you want robotcentric, change "Field" to "Robot" and remove the imuValue variable,
             if you want exponential drive turned off, change the last variable to false*/
@@ -198,9 +203,10 @@ public class SampleTeleOp extends LinearOpMode {
                         driver1.getLeftX(),
                         driver1.getLeftY(),
                         driver1.getRightX(),
-                        lazyImu.get().getRobotYawPitchRollAngles().getYaw(),
-                        true
+                        lazyImu.get().getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES)
                     );
+            telemetry.addData("lazyImu: ", lazyImu.get().getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
+            telemetry.update();
         }
     }
 }
