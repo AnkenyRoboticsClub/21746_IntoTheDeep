@@ -8,6 +8,8 @@ import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 public class Mechanisms {
 
@@ -101,8 +103,9 @@ public class Mechanisms {
         }
     }
 
+    //use as a example for servos!
     //class to create a claw
-    public static class Claw {
+    /*public static class Claw {
         private Servo claw;
         //create the claw object from hardware map
 
@@ -139,19 +142,31 @@ public class Mechanisms {
             return new Claw.OpenClaw();
         }
     }
+    */
 
-    //Robot Arm
     public static class Arm {
         final double ARM_TICKS_PER_DEGREE =
                 28 // number of encoder ticks per rotation of the bare motor
                         * 250047.0 / 4913.0 // This is the exact gear ratio of the 50.9:1 Yellow Jacket gearbox
                         * 100.0 / 20.0 // This is the external gear reduction, a 20T pinion gear that drives a 100T hub-mount gear
                         * 1/360.0; // we want ticks per degree, not per rotation
-        private Motor arm;
+        //values copied from TeleOpV3
+        final double ARM_COLLAPSED_INTO_ROBOT  = 0;
+        final double ARM_COLLECT               = 255 * ARM_TICKS_PER_DEGREE;
+        final double ARM_CLEAR_BARRIER         = 230 * ARM_TICKS_PER_DEGREE;
+        final double ARM_SCORE_SPECIMEN        = 160 * ARM_TICKS_PER_DEGREE;
+        final double ARM_SCORE_SAMPLE_IN_LOW   = 150 * ARM_TICKS_PER_DEGREE;
+        final double ARM_ATTACH_HANGING_HOOK   = 130 * ARM_TICKS_PER_DEGREE;
+        final double ARM_WINCH_ROBOT           = 10  * ARM_TICKS_PER_DEGREE;
+        final double FUDGE_FACTOR = 15 * ARM_TICKS_PER_DEGREE;
+        //public Motor arm;
+        public DcMotor armMotor;
+        public int target;
+        public int armPositionFudgeFactor;
         //create lift from hardwaremap and initialize it
 
         public Arm(HardwareMap hardwareMap) {
-            //initialize our lift from hardwareMap
+            /*//initialize our lift from hardwareMap
             arm = new Motor(hardwareMap, "left_arm", Motor.GoBILDA.RPM_117);
             //set the braking mode to brake when theres no power given so it better holds target position
             arm.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
@@ -160,10 +175,16 @@ public class Mechanisms {
             //set the lift motor direction
             //arm.setInverted(true);
             //set position coefficient of the lift, (p value)
-            arm.setPositionCoefficient(0.001);
+            arm.setPositionCoefficient(0.001);*/
+            armMotor = hardwareMap.get(DcMotor.class, "left_arm"); //the arm motor
+            armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            armMotor.setTargetPosition(0);
+            armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
         }
 
-        public class ArmScoreLow implements Action {
+        public class ArmRunPosition implements Action {
             // checks if the lift motor has been powered on
             private boolean initialized = false;
             // actions are formatted via telemetry packets as below
@@ -172,60 +193,61 @@ public class Mechanisms {
             public boolean run(@NonNull TelemetryPacket packet) {
                 // powers on motor, if it is not on
                 if (!initialized) {
-                    arm.set(0.8);
+                    armMotor.setPower(0.8);
                     initialized = true;
                 }
                 //set the target position of the lift to 3000 ticks
-                arm.setTargetPosition((int) (150*ARM_TICKS_PER_DEGREE));
-                if (!arm.atTargetPosition()) {
+                armMotor.setTargetPosition(target+armPositionFudgeFactor);
+                //((DcMotorEx) armMotor).setVelocity(2100);
+                armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                return false;
+                /*if (!(Math.abs(armMotor.getCurrentPosition()-armMotor.getTargetPosition())>10)) {
                     // true causes the action to rerun
                     return true;
                 } else {
                     // false stops action rerun and stops the lift
-                    arm.set(0);
+                    //arm.set(0);
                     return false;
-                }
+                }*/
                 // overall, the action powers the lift until it surpasses
                 // 3000 encoder ticks, then powers it off2
             }
         }
+
         public Action armScoreLow() {
-            return new ArmScoreLow();
-        }
-
-        public class ArmCollapse implements Action {
-            // checks if the lift motor has been powered on
-            private boolean initialized = false;
-            // actions are formatted via telemetry packets as below
-
-            @Override
-            public boolean run(@NonNull TelemetryPacket packet) {
-                //set the lifts target position to down position
-                arm.setTargetPosition(0);
-                // powers on motor, if it is not on
-                if (!initialized) {
-                    arm.set(-0.8);
-                    initialized = true;
-                }
-
-                //if the lift isn't at the target position then repeat the loop
-                if (!arm.atTargetPosition()) {
-                    // true causes the action to rerun
-                    return true;
-                } else {
-                    // false stops action rerun and stops the lift
-                    arm.set(0);
-                    return false;
-                }
-                // overall, the action powers the lift down until it goes below
-                // 100 encoder ticks, then powers it off
-            }
+            target = (int) ARM_SCORE_SAMPLE_IN_LOW;
+            return new ArmRunPosition();
         }
         public Action armCollapse(){
-            return new ArmCollapse();
+            target = (int) ARM_COLLAPSED_INTO_ROBOT;
+            return new ArmRunPosition();
+        }
+
+        public Action armCollect(){
+            target = (int) ARM_COLLECT;
+            return new ArmRunPosition();
+        }
+
+        public Action armAttachHangingHook(){
+            target = (int) ARM_ATTACH_HANGING_HOOK;
+            return new ArmRunPosition();
+        }
+        public Action armClear(){
+            target = (int) ARM_CLEAR_BARRIER;
+            return new ArmRunPosition();
+        }
+
+        public Action armScoreSpecimen(){
+            target = (int) ARM_SCORE_SPECIMEN;
+            return new ArmRunPosition();
+        }
+
+        public Action armRun(){
+            return new ArmRunPosition();
         }
     }
 
+    /* //can use as an example for ftc lib PID but default one is better (less bugs)
     //lift class (this will require an encoder plugged into the motor)
     public static class Lift {
         private Motor lift;
@@ -305,7 +327,7 @@ public class Mechanisms {
         public Action liftDown(){
             return new LiftDown();
         }
-    }
+    }*/
     /*public static class Intake {
         private Motor intake;
         //create the claw object from hardware map

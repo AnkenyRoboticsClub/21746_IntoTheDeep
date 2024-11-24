@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
+import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.ftc.LazyImu;
 import com.arcrobotics.ftclib.drivebase.MecanumDrive;
@@ -66,15 +67,15 @@ public class SampleTeleOp extends LinearOpMode {
             Motor rightBack = new Motor(hardwareMap, "rightBack", Motor.GoBILDA.RPM_312);
 
         //change the braking behavior, this is mostly personal preference but I recommend leaving this unchanged.
-            leftFront.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
-            rightFront.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
-            leftBack.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
-            rightBack.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
+            //leftFront.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
+            //rightFront.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
+            //leftBack.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
+            //rightBack.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
         //reverse motors
-            leftFront.setInverted(true);
-            leftBack.setInverted(true);
-            rightFront.setInverted(true);
-            rightBack.setInverted(true);
+            //leftFront.setInverted(true);
+            //leftBack.setInverted(true);
+            //rightFront.setInverted(true);
+            //rightBack.setInverted(true);
 
         //initialize our mecanum drive from ftclib
             com.arcrobotics.ftclib.drivebase.MecanumDrive drive = new MecanumDrive(
@@ -97,6 +98,11 @@ public class SampleTeleOp extends LinearOpMode {
 
         //intialize intake motor from our mechanisms file
             //Mechanisms.Intake intake = new Mechanisms.Intake(hardwareMap);
+
+        //initialize new mechanisms!
+            Mechanisms.Intake intake = new Mechanisms.Intake(hardwareMap);
+            Mechanisms.Wrist wrist = new Mechanisms.Wrist(hardwareMap);
+            Mechanisms.Arm arm = new Mechanisms.Arm(hardwareMap);
 
 
         //wait for the driver station to start
@@ -124,34 +130,90 @@ public class SampleTeleOp extends LinearOpMode {
                 driver1.readButtons();
                 driver2.readButtons();
 
-                if (driver1.wasJustPressed(GamepadKeys.Button.START)){
+                //armPositionFudgeFactor = FUDGE_FACTOR * (gamepad2.right_trigger + (-gamepad2.left_trigger) + gamepad1.right_trigger + (-gamepad1.left_trigger));
+            double rightTrig2 = driver2.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER);
+            double leftTrig2 = driver2.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER);
+            arm.armPositionFudgeFactor = (int) (arm.FUDGE_FACTOR * (rightTrig2-leftTrig2));
+
+                if (driver1.getButton(GamepadKeys.Button.START)){
                     lazyImu.get().resetYaw();
                 }
 
+                if (driver2.getButton(GamepadKeys.Button.A)) {
+                    /*armPosition = ARM_COLLECT;
+                    //liftPosition = LIFT_COLLAPSED;
+                    wrist.setPosition(WRIST_FOLDED_OUT);
+                    intake.setPower(INTAKE_COLLECT);*/
+                    runningActions.add(new ParallelAction(
+                            arm.armCollect(),
+                            wrist.foldOutWrist(),
+                            intake.intakeCollect()
+                    ));
+                } else if (driver2.getButton(GamepadKeys.Button.X)) {
+                    runningActions.add(new ParallelAction(
+                            arm.armClear()
+                    ));
+                } else if (driver2.getButton(GamepadKeys.Button.Y)) {
+                    runningActions.add(new ParallelAction(
+                            wrist.foldOutWrist()
+                    ));
+                } else if (driver2.getButton(GamepadKeys.Button.DPAD_LEFT)) {
+                    runningActions.add(new ParallelAction(
+                            arm.armCollapse(),
+                            intake.intakeOff(),
+                            wrist.foldInWrist()
+                    ));
+                }  else if (driver2.getButton(GamepadKeys.Button.DPAD_RIGHT)) {
+                    runningActions.add(new ParallelAction(
+                            arm.armScoreLow(),
+                            wrist.foldOutWrist()
+                    ));
+                }  else if (driver2.getButton(GamepadKeys.Button.DPAD_UP)) {
+                    runningActions.add(new ParallelAction(
+                            arm.armAttachHangingHook(),
+                            intake.intakeOff(),
+                            wrist.foldInWrist()
+                    ));
+                }  else if (driver2.getButton(GamepadKeys.Button.DPAD_DOWN)) {
+                    runningActions.add(new ParallelAction(
+                            arm.armScoreSpecimen(),
+                            wrist.foldInWrist()
+                    ));
+                }
+
+            runningActions.add(new ParallelAction(
+                    arm.armRun()
+            ));
+
             //example of claw control
-                if (driver1.getButton(GamepadKeys.Button.A)) {
+                /*if (driver1.wasJustPressed(GamepadKeys.Button.A)) {
                     runningActions.add(new SequentialAction(
                             //claw.openClaw()
+                            intake.intakeCollect()
+
                     ));
-                    }
-                else if (driver1.getButton(GamepadKeys.Button.B)) {
+                }
+                else if (driver1.wasJustPressed(GamepadKeys.Button.B)) {
                     runningActions.add(new SequentialAction(
                             //claw.closeClaw()
+                            intake.intakeOff()
                     ));
-                    }
+                }
 
             //example of lift control
                 //can use .wasJustPressed because the lift target position only needs to change once.
                     if(driver1.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER)) {
                         runningActions.add(new SequentialAction(
                                 //lift.liftUp()
+                                arm.armScoreLow()
                         ));
-                        }
+                    }
                     else if (driver1.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER)) {
                         runningActions.add(new SequentialAction(
                                 //lift.liftDown()
+                                arm.armCollapse()
                         ));
-                        }
+                    }
 
             //example of intake control
                 //use an if else statement first so that theres a tolerance before it starts moving the motor
@@ -160,13 +222,13 @@ public class SampleTeleOp extends LinearOpMode {
                         runningActions.add(new SequentialAction(
                                 //intake.spinForward()
                         ));
-                        }
+                    }
                     else if(driver1.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.1) {
                             //call the spin intake backward function
                         runningActions.add(new SequentialAction(
                                 //intake.spinBackward()
                         ));
-                        }
+                    }*/
 
 
             /*Code to automatically reset the imu to the last known setting if it gets reset because of static.
@@ -190,22 +252,30 @@ public class SampleTeleOp extends LinearOpMode {
 
             */
             //Code to manually reset the imu, you can change this to whatever button you want
-                if (driver1.getButton(GamepadKeys.Button.DPAD_DOWN)) {
+                /*if (driver1.getButton(GamepadKeys.Button.DPAD_DOWN)) {
                     imu.initialize();
                     imuValue = 0;
                     prevImuValue = 0;
                     imuDifference = 0;
-                }
+                }*/
             /*call our mecanum drive function from ftclib using field centric control,
             if you want robotcentric, change "Field" to "Robot" and remove the imuValue variable,
             if you want exponential drive turned off, change the last variable to false*/
+            double xMult = 0.5;
+            double yMult = 0.5;
+            if (driver1.getButton(GamepadKeys.Button.Y)){
+                xMult = 1;
+                yMult = 1;
+            }
                 drive.driveFieldCentric(
-                        driver1.getLeftX(),
-                        driver1.getLeftY(),
-                        driver1.getRightX(),
+                        -driver1.getLeftX()*xMult,
+                        -driver1.getLeftY()*yMult,
+                        -driver1.getRightX(),
                         lazyImu.get().getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES)
                     );
             telemetry.addData("lazyImu: ", lazyImu.get().getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
+            telemetry.addData("arm encoder: ", arm.armMotor.getCurrentPosition());
+            telemetry.addData("arm target: ", arm.armMotor.getTargetPosition());
             telemetry.update();
         }
     }
