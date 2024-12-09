@@ -7,6 +7,8 @@ import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive;
 
@@ -18,6 +20,18 @@ public class AutoV2 extends LinearOpMode {
 
     @Override
     public void runOpMode() {
+
+        DcMotorEx leftFront, leftBack, rightBack, rightFront;
+
+        leftFront = hardwareMap.get(DcMotorEx.class, "leftFront");
+        leftBack = hardwareMap.get(DcMotorEx.class, "leftBack");
+        rightBack = hardwareMap.get(DcMotorEx.class, "rightBack");
+        rightFront = hardwareMap.get(DcMotorEx.class, "rightFront");
+
+        leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         double startX = 14;
         double startY = -63;
