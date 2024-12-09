@@ -21,7 +21,7 @@ public class AutoV2 extends LinearOpMode {
     @Override
     public void runOpMode() {
 
-        DcMotorEx leftFront, leftBack, rightBack, rightFront;
+        /*DcMotorEx leftFront, leftBack, rightBack, rightFront;
 
         leftFront = hardwareMap.get(DcMotorEx.class, "leftFront");
         leftBack = hardwareMap.get(DcMotorEx.class, "leftBack");
@@ -31,7 +31,7 @@ public class AutoV2 extends LinearOpMode {
         leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);*/
 
         double startX = 14;
         double startY = -63;
