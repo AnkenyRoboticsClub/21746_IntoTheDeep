@@ -275,14 +275,16 @@ public class SampleTeleOp extends LinearOpMode {
             if you want exponential drive turned off, change the last variable to false*/
             double xMult = 0.5;
             double yMult = 0.5;
+            double rMult = 0.5;
             if (driver1.getButton(GamepadKeys.Button.Y)){
                 xMult = 1;
                 yMult = 1;
+                rMult = 1;
             }
                 drive.driveFieldCentric(
                         -driver1.getLeftX()*xMult,
                         -driver1.getLeftY()*yMult,
-                        -driver1.getRightX(),
+                        -driver1.getRightX()*rMult,
                         lazyImu.get().getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES)
                     );
             telemetry.addData("lazyImu: ", lazyImu.get().getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
