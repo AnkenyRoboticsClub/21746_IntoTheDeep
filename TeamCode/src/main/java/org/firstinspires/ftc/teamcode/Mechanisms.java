@@ -199,7 +199,7 @@ public class Mechanisms {
                 //set the target position of the lift to 3000 ticks
                 armMotor.setTargetPosition(target+armPositionFudgeFactor);
                 //((DcMotorEx) armMotor).setVelocity(2100);
-                int tolerance = ((DcMotorEx) armMotor).getTargetPositionTolerance();
+                int tolerance = ((DcMotorEx) armMotor).getTargetPositionTolerance()+2;
                 armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 //return false;
                 if ((Math.abs(armMotor.getCurrentPosition()-armMotor.getTargetPosition())>tolerance)) {

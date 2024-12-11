@@ -7,16 +7,14 @@ import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive;
 
 @Config
 //Need the autnomous tag in order for it show up on driver station as an autonomous program
 // You can also set the name of the autonomous and the group
-@Autonomous(name = "AutoV2", group = "Autonomous")
-public class AutoV2 extends LinearOpMode {
+@Autonomous(name = "RightV2", group = "Autonomous")
+public class RightAutoV2 extends LinearOpMode {
 
     @Override
     public void runOpMode() {
@@ -60,7 +58,7 @@ public class AutoV2 extends LinearOpMode {
                 .strafeToLinearHeading(new Vector2d(36+startX, topY), Math.toRadians(0))
                 .splineToLinearHeading(new Pose2d(wallX, topY, Math.toRadians(0)), Math.toRadians(0))
                 .strafeToLinearHeading(new Vector2d(wallX, 10+startY), Math.toRadians(0))
-                .splineToLinearHeading(new Pose2d(20+startX, 5+startY, Math.toRadians(0)), Math.toRadians(180))
+                .strafeToLinearHeading(new Vector2d(20+startX, 5+startY), Math.toRadians(0))
                 ;
 
         //wait for autonomous to start

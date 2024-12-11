@@ -44,16 +44,17 @@ public class LeftAutoV2 extends LinearOpMode {
         Mechanisms.Wrist wrist = new Mechanisms.Wrist(hardwareMap);
 
         TrajectoryActionBuilder traj1 = drive.actionBuilder(initialPose)
-                .strafeToLinearHeading(new Vector2d(-40, -50), Math.toRadians(-20))
-                .afterTime(0, arm.armCollect())
+                .strafeToLinearHeading(new Vector2d(-25, -36), Math.toRadians(-20))
+                .afterTime(0.1, arm.armCollect())
                 .afterTime(0, wrist.foldOutWrist())
                 .afterTime(0, intake.intakeCollect())
-                .strafeToLinearHeading(new Vector2d(-33, -45), Math.toRadians(-20))
                 ;
 
         TrajectoryActionBuilder traj2 = drive.actionBuilder(initialPose)
-                .strafeToLinearHeading(new Vector2d(-25, -36), Math.toRadians(-20))
                 .strafeToLinearHeading(new Vector2d(-31, -34), Math.toRadians(-20))
+                .afterTime(0.1, intake.intakeOff())
+                .afterTime(0.1, arm.armScoreLow())
+                .strafeToLinearHeading(new Vector2d(-52, -52), Math.toRadians(45))
                 ;
 
         //wait for autonomous to start
