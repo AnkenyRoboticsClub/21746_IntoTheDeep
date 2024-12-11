@@ -199,16 +199,17 @@ public class Mechanisms {
                 //set the target position of the lift to 3000 ticks
                 armMotor.setTargetPosition(target+armPositionFudgeFactor);
                 //((DcMotorEx) armMotor).setVelocity(2100);
+                int tolerance = ((DcMotorEx) armMotor).getTargetPositionTolerance();
                 armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                return false;
-                /*if (!(Math.abs(armMotor.getCurrentPosition()-armMotor.getTargetPosition())>10)) {
+                //return false;
+                if ((Math.abs(armMotor.getCurrentPosition()-armMotor.getTargetPosition())>tolerance)) {
                     // true causes the action to rerun
                     return true;
                 } else {
-                    // false stops action rerun and stops the lift
+                    //false stops action rerun and stops the arm
                     //arm.set(0);
                     return false;
-                }*/
+                }
                 // overall, the action powers the lift until it surpasses
                 // 3000 encoder ticks, then powers it off2
             }
