@@ -48,9 +48,13 @@ public class MeepMeepTesting {
                 .build();
 
         mySecondBot.runAction(mySecondBot.getDrive().actionBuilder(new Pose2d(-33, -63, Math.toRadians(-90)))
-                .strafeToLinearHeading(new Vector2d(-25, -36), Math.toRadians(-20))
-                .strafeToLinearHeading(new Vector2d(-31, -34), Math.toRadians(-20))
                 .strafeToLinearHeading(new Vector2d(-52, -52), Math.toRadians(45))
+                .strafeToLinearHeading(new Vector2d(-25, -36), Math.toRadians(-20))
+                .strafeToLinearHeading(new Vector2d(-32, -32), Math.toRadians(-20))
+                .strafeToLinearHeading(new Vector2d(-52, -52), Math.toRadians(45))
+                .strafeToLinearHeading(new Vector2d(-36, -25), Math.toRadians(0))
+                .strafeToLinearHeading(new Vector2d(-43, -25), Math.toRadians(0))
+
                 .build());
 
         meepMeep.setBackground(MeepMeep.Background.FIELD_INTO_THE_DEEP_JUICE_DARK)

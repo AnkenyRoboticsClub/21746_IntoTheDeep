@@ -43,12 +43,14 @@ public class LeftAutoV3 extends LinearOpMode {
         Mechanisms.Intake intake = new Mechanisms.Intake(hardwareMap);
         Mechanisms.Wrist wrist = new Mechanisms.Wrist(hardwareMap);
 
+        //moves to score preloaded sample
         TrajectoryActionBuilder traj1 = drive.actionBuilder(initialPose)
                 .strafeToLinearHeading(new Vector2d(-52, -52), Math.toRadians(45))
                 .afterTime(0, arm.armScoreLowFix())
                 .afterTime(0, wrist.foldOutWrist())
                 ;
 
+        //get into position to pick up 1st sample
         TrajectoryActionBuilder traj2 = traj1.endTrajectory().fresh()
                 .strafeToLinearHeading(new Vector2d(-25, -36), Math.toRadians(-20))
                 //.afterTime(0.1, arm.armCollect())
@@ -56,18 +58,27 @@ public class LeftAutoV3 extends LinearOpMode {
                 //.afterTime(0, intake.intakeCollect())
                 ;
 
+        //moves to ACTUALLY pick up the sample
         TrajectoryActionBuilder traj3 = traj2.endTrajectory().fresh()
                 .strafeToLinearHeading(new Vector2d(-32, -32), Math.toRadians(-20))
                 ;
+
+        //moves to corner to score sample
         TrajectoryActionBuilder traj4 = traj3.endTrajectory().fresh()
                 .strafeToLinearHeading(new Vector2d(-52, -52), Math.toRadians(45))
                 //.afterTime(0, intake.intakeOff())
                 //.afterTime(0, arm.armScoreLow())
                 ;
+
+        //moves to position to pick 2nd sample
         TrajectoryActionBuilder traj5 = traj4.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(-36, -32), Math.toRadians(90))
+                .strafeToLinearHeading(new Vector2d(-36, -25), Math.toRadians(0))
                 .afterTime(0, wrist.foldInWrist())
                 .afterTime(0, arm.armCollapseFix())
+                ;
+
+        TrajectoryActionBuilder traj6 = traj5.endTrajectory().fresh()
+                .strafeToLinearHeading(new Vector2d(-43, -25), Math.toRadians(0))
                 ;
 
         //wait for autonomous to start
