@@ -11,6 +11,8 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
+//import java.util.Timer;
+
 public class Mechanisms {
 
     //class to create a wrist
@@ -54,6 +56,9 @@ public class Mechanisms {
 
     public static class Intake {
         private CRServo intake;
+        private boolean firstTime = false;
+        private double timer = 0;
+        private int intakeTime =100000;
         //create the claw object from hardware map
 
         public Intake(HardwareMap hardwareMap) {
@@ -67,7 +72,21 @@ public class Mechanisms {
             public boolean run(@NonNull TelemetryPacket packet) {
                 //when closeclaw is run, set the claw to closed position
                 intake.setPower(1);
-                return false;
+                //return false;
+                if (!firstTime) {
+                    //timer
+                    firstTime = true;
+                    timer = 0;
+                } else {
+                    timer++;
+                }
+                if (timer>intakeTime) {
+                    firstTime = false;
+                    return false;
+
+                } else {
+                    return true;
+                }
             }
         }
         //allow the function to be able to called from other files
@@ -81,7 +100,21 @@ public class Mechanisms {
             public boolean run(@NonNull TelemetryPacket packet) {
                 //when openclaw is run, set the claw to the open position
                 intake.setPower(0);
-                return false;
+                //return false;
+                if (!firstTime) {
+                    //timer
+                    firstTime = true;
+                    timer = 0;
+                } else {
+                    timer++;
+                }
+                if (timer>intakeTime) {
+                    firstTime = false;
+                    return false;
+
+                } else {
+                    return true;
+                }
             }
         }
         //allow the function to be able to be called from other files
@@ -94,7 +127,21 @@ public class Mechanisms {
             public boolean run(@NonNull TelemetryPacket packet) {
                 //when openclaw is run, set the claw to the open position
                 intake.setPower(-0.5);
-                return false;
+                //return false;
+                if (!firstTime) {
+                    //timer
+                    firstTime = true;
+                    timer = 0;
+                } else {
+                    timer++;
+                }
+                if (timer>intakeTime) {
+                    firstTime = false;
+                    return false;
+
+                } else {
+                    return true;
+                }
             }
         }
         //allow the function to be able to be called from other files
@@ -214,19 +261,120 @@ public class Mechanisms {
                 // 3000 encoder ticks, then powers it off2
             }
         }
+        public class ArmRunPositionCollect implements Action {
+            //made to fix my cheat coding b4
+            // checks if the lift motor has been powered on
+            private boolean initialized = false;
+            // actions are formatted via telemetry packets as below
+
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                // powers on motor, if it is not on
+                if (!initialized) {
+                    armMotor.setPower(0.8);
+                    initialized = true;
+                }
+                //set the target position of the lift to 3000 ticks
+                armMotor.setTargetPosition((int) ARM_COLLECT);
+                //((DcMotorEx) armMotor).setVelocity(2100);
+                int tolerance = ((DcMotorEx) armMotor).getTargetPositionTolerance()+2;
+                armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                //return false;
+                if ((Math.abs(armMotor.getCurrentPosition()-armMotor.getTargetPosition())>tolerance)) {
+                    // true causes the action to rerun
+                    return true;
+                } else {
+                    //false stops action rerun and stops the arm
+                    //arm.set(0);
+                    return false;
+                }
+            }
+        }
+
+        public class ArmRunPositionScoreLow implements Action {
+            //made to fix my cheat coding b4
+            // checks if the lift motor has been powered on
+            private boolean initialized = false;
+            // actions are formatted via telemetry packets as below
+
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                // powers on motor, if it is not on
+                if (!initialized) {
+                    armMotor.setPower(0.8);
+                    initialized = true;
+                }
+                //set the target position of the lift to 3000 ticks
+                armMotor.setTargetPosition((int) ARM_SCORE_SAMPLE_IN_LOW+10);
+                //((DcMotorEx) armMotor).setVelocity(2100);
+                int tolerance = ((DcMotorEx) armMotor).getTargetPositionTolerance()+2;
+                armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                //return false;
+                if ((Math.abs(armMotor.getCurrentPosition()-armMotor.getTargetPosition())>tolerance)) {
+                    // true causes the action to rerun
+                    return true;
+                } else {
+                    //false stops action rerun and stops the arm
+                    //arm.set(0);
+                    return false;
+                }
+            }
+        }
+
+        public class ArmRunPositionCollapse implements Action {
+            //made to fix my cheat coding b4
+            // checks if the lift motor has been powered on
+            private boolean initialized = false;
+            // actions are formatted via telemetry packets as below
+
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                // powers on motor, if it is not on
+                if (!initialized) {
+                    armMotor.setPower(0.8);
+                    initialized = true;
+                }
+                //set the target position of the lift to 3000 ticks
+                armMotor.setTargetPosition((int) ARM_COLLAPSED_INTO_ROBOT);
+                //((DcMotorEx) armMotor).setVelocity(2100);
+                int tolerance = ((DcMotorEx) armMotor).getTargetPositionTolerance()+2;
+                armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                //return false;
+                if ((Math.abs(armMotor.getCurrentPosition()-armMotor.getTargetPosition())>tolerance)) {
+                    // true causes the action to rerun
+                    return true;
+                } else {
+                    //false stops action rerun and stops the arm
+                    //arm.set(0);
+                    return false;
+                }
+            }
+        }
 
         public Action armScoreLow() {
             target = (int) ARM_SCORE_SAMPLE_IN_LOW;
             return new ArmRunPosition();
+        }
+
+        public Action armScoreLowFix() {
+            return new ArmRunPositionScoreLow();
         }
         public Action armCollapse(){
             target = (int) ARM_COLLAPSED_INTO_ROBOT;
             return new ArmRunPosition();
         }
 
+        public Action armCollapseFix(){
+            return new ArmRunPositionCollapse();
+        }
+
         public Action armCollect(){
             target = (int) ARM_COLLECT;
             return new ArmRunPosition();
+        }
+
+        public Action armCollectFix(){
+            return new ArmRunPositionCollect();
         }
 
         public Action armAttachHangingHook(){

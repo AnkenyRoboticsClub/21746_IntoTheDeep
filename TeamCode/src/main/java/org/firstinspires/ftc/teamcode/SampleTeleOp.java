@@ -151,7 +151,7 @@ public class SampleTeleOp extends LinearOpMode {
                     ));
                 } else if (driver2.getButton(GamepadKeys.Button.LEFT_BUMPER)) {
                     runningActions.add(new ParallelAction(
-                            intake.intakeDeposit()
+                            intake.intakeCollect()
                     ));
                 } else if (driver2.getButton(GamepadKeys.Button.B)) {
                     runningActions.add(new ParallelAction(
@@ -159,7 +159,7 @@ public class SampleTeleOp extends LinearOpMode {
                     ));
                 } else if (driver2.getButton(GamepadKeys.Button.RIGHT_BUMPER)) {
                     runningActions.add(new ParallelAction(
-                            intake.intakeCollect()
+                            intake.intakeDeposit()
                     ));
                 } else if (driver2.getButton(GamepadKeys.Button.X)) {
                     runningActions.add(new ParallelAction(
