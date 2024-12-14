@@ -396,6 +396,103 @@ public class Mechanisms {
         }
     }
 
+    public static class Slide {
+        final double ARM_COLLAPSED_INTO_ROBOT  = 0;
+        final double ARM_COLLECT               = 0;
+        final double ARM_CLEAR_BARRIER         = 0;
+        final double ARM_SCORE_SPECIMEN        = 0;
+        final double ARM_SCORE_SAMPLE_IN_LOW   = 1000;
+        final double ARM_ATTACH_HANGING_HOOK   = 0;
+        final double FUDGE_FACTOR = 15;
+        //public Motor arm;
+        public DcMotor armSlideMotor;
+        public int target;
+        public int armPositionFudgeFactor;
+        //create lift from hardwaremap and initialize it
+
+        public Slide(HardwareMap hardwareMap) {
+            /*//initialize our lift from hardwareMap
+            arm = new Motor(hardwareMap, "left_arm", Motor.GoBILDA.RPM_117);
+            //set the braking mode to brake when theres no power given so it better holds target position
+            arm.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
+            //put it into position control so it automatically flips direction
+            arm.setRunMode(Motor.RunMode.PositionControl);
+            //set the lift motor direction
+            //arm.setInverted(true);
+            //set position coefficient of the lift, (p value)
+            arm.setPositionCoefficient(0.001);*/
+            armSlideMotor = hardwareMap.get(DcMotor.class, "arm_slide"); //the arm motor
+            armSlideMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            armSlideMotor.setTargetPosition(0);
+            armSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            armSlideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        }
+
+        public class ArmRunPosition implements Action {
+            // checks if the lift motor has been powered on
+            private boolean initialized = false;
+            // actions are formatted via telemetry packets as below
+
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                // powers on motor, if it is not on
+                if (!initialized) {
+                    armSlideMotor.setPower(0.8);
+                    initialized = true;
+                }
+                //set the target position of the lift to 3000 ticks
+                armSlideMotor.setTargetPosition(target+armPositionFudgeFactor);
+                //((DcMotorEx) armMotor).setVelocity(2100);
+                int tolerance = ((DcMotorEx) armSlideMotor).getTargetPositionTolerance()+2;
+                armSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                //return false;
+                if ((Math.abs(armSlideMotor.getCurrentPosition()-armSlideMotor.getTargetPosition())>tolerance)) {
+                    // true causes the action to rerun
+                    return true;
+                } else {
+                    //false stops action rerun and stops the arm
+                    //arm.set(0);
+                    return false;
+                }
+                // overall, the action powers the lift until it surpasses
+                // 3000 encoder ticks, then powers it off2
+            }
+        }
+
+        public Action armScoreLow() {
+            target = (int) ARM_SCORE_SAMPLE_IN_LOW;
+            return new ArmRunPosition();
+        }
+        public Action armCollapse(){
+            target = (int) ARM_COLLAPSED_INTO_ROBOT;
+            return new ArmRunPosition();
+        }
+
+        public Action armCollect(){
+            target = (int) ARM_COLLECT;
+            return new ArmRunPosition();
+        }
+
+        public Action armAttachHangingHook(){
+            target = (int) ARM_ATTACH_HANGING_HOOK;
+            return new ArmRunPosition();
+        }
+        public Action armClear(){
+            target = (int) ARM_CLEAR_BARRIER;
+            return new ArmRunPosition();
+        }
+
+        public Action armScoreSpecimen(){
+            target = (int) ARM_SCORE_SPECIMEN;
+            return new ArmRunPosition();
+        }
+
+        public Action armRun(){
+            return new ArmRunPosition();
+        }
+    }
+
     /* //can use as an example for ftc lib PID but default one is better (less bugs)
     //lift class (this will require an encoder plugged into the motor)
     public static class Lift {
