@@ -77,8 +77,29 @@ public class LeftAutoV3 extends LinearOpMode {
                 .afterTime(0, arm.armCollapseFix())
                 ;
 
+        //moves to ACTUALLY pick 2nd sample
         TrajectoryActionBuilder traj6 = traj5.endTrajectory().fresh()
                 .strafeToLinearHeading(new Vector2d(-43, -25), Math.toRadians(0))
+                ;
+
+        //moves to original position to deposit
+        TrajectoryActionBuilder traj7 = traj6.endTrajectory().fresh()
+                .strafeToLinearHeading(new Vector2d(-52, -52), Math.toRadians(45))
+                ;
+
+        //position to pick up 3rd sample
+        TrajectoryActionBuilder traj8 = traj7.endTrajectory().fresh()
+                .strafeToLinearHeading(new Vector2d(-49, -25), Math.toRadians(0))
+                ;
+
+        //ACTUALLY pick sample 3
+        TrajectoryActionBuilder traj9 = traj8.endTrajectory().fresh()
+                .strafeToLinearHeading(new Vector2d(-56, -25), Math.toRadians(0))
+                ;
+
+        //moves to deposit
+        TrajectoryActionBuilder traj10 = traj9.endTrajectory().fresh()
+                .strafeToLinearHeading(new Vector2d(-52, -52), Math.toRadians(45))
                 ;
 
         //wait for autonomous to start
@@ -104,6 +125,23 @@ public class LeftAutoV3 extends LinearOpMode {
                         , traj4.build()
                         , intake.intakeDeposit()
                         , traj5.build()
+                        , arm.armCollectFix()
+                        , wrist.foldOutWrist()
+                        , intake.intakeCollect()
+                        , traj6.build()
+                        , intake.intakeCollect()
+                        , intake.intakeOff()
+                        , traj7.build()
+                        , intake.intakeDeposit()
+                        , traj8.build()
+                        , arm.armCollectFix()
+                        , wrist.foldOutWrist()
+                        , intake.intakeCollect()
+                        , traj9.build()
+                        , intake.intakeCollect()
+                        , intake.intakeOff()
+                        , traj10.build()
+                        , intake.intakeDeposit()
                 )
         );
     }
