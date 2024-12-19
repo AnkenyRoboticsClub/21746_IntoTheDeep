@@ -192,7 +192,7 @@ public class TeleOpV2 extends LinearOpMode {
                 }  else if (driver2.getButton(GamepadKeys.Button.DPAD_DOWN)) {
                     runningActions.add(new ParallelAction(
                             arm.armScoreSpecimen(),
-                            wrist.foldInWrist()
+                            wrist.foldOutWristSpecimen()
                             ,slide.armScoreSpecimen()
                     ));
                 }

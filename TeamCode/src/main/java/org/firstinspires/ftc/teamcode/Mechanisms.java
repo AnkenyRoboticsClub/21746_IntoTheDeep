@@ -30,7 +30,7 @@ public class Mechanisms {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
                 //when closeclaw is run, set the claw to closed position
-                wrist.setPosition(0);
+                wrist.setPosition(1);
                 return false;
             }
         }
@@ -39,6 +39,7 @@ public class Mechanisms {
             return new Wrist.FoldInWrist();
         }
         //create an foldinwrist function by implementing action class
+
 
         public class FoldOutWrist implements Action {
             @Override
@@ -51,6 +52,19 @@ public class Mechanisms {
         //allow the function to be able to be called from other files
         public Action foldOutWrist() {
             return new Wrist.FoldOutWrist();
+        }
+
+        public class FoldOutWristSpecimen implements Action {
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                //when openclaw is run, set the claw to the open position
+                wrist.setPosition(0.7);
+                return false;
+            }
+        }
+        //allow the function to be able to be called from other files
+        public Action foldOutWristSpecimen() {
+            return new Wrist.FoldOutWristSpecimen();
         }
     }
 
@@ -199,11 +213,12 @@ public class Mechanisms {
                         * 1/360.0; // we want ticks per degree, not per rotation
         //values copied from TeleOpV3
         final double ARM_COLLAPSED_INTO_ROBOT  = 0;
-        final double ARM_COLLECT               = 255 * ARM_TICKS_PER_DEGREE;
-        final double ARM_CLEAR_BARRIER         = 230 * ARM_TICKS_PER_DEGREE;
-        final double ARM_SCORE_SPECIMEN        = 160 * ARM_TICKS_PER_DEGREE;
-        final double ARM_SCORE_SAMPLE_IN_LOW   = 150 * ARM_TICKS_PER_DEGREE;
-        final double ARM_ATTACH_HANGING_HOOK   = 130 * ARM_TICKS_PER_DEGREE;
+        final double ARM_COLLECT               = 17 * ARM_TICKS_PER_DEGREE;
+        final double ARM_CLEAR_BARRIER         = 25 * ARM_TICKS_PER_DEGREE;
+        final double ARM_SCORE_SPECIMEN        = 68 * ARM_TICKS_PER_DEGREE;
+        final double ARM_SCORE_SAMPLE_IN_LOW   = 83 * ARM_TICKS_PER_DEGREE;
+        final double ARM_SCORE_SAMPLE_IN_HIGH   = 84 * ARM_TICKS_PER_DEGREE;
+        final double ARM_ATTACH_HANGING_HOOK   = 100 * ARM_TICKS_PER_DEGREE;
         final double ARM_WINCH_ROBOT           = 10  * ARM_TICKS_PER_DEGREE;
         final double FUDGE_FACTOR = 15 * ARM_TICKS_PER_DEGREE;
         //public Motor arm;
@@ -398,10 +413,11 @@ public class Mechanisms {
 
     public static class Slide {
         final double ARM_COLLAPSED_INTO_ROBOT  = 0;
-        final double ARM_COLLECT               = 0;
-        final double ARM_CLEAR_BARRIER         = 0;
-        final double ARM_SCORE_SPECIMEN        = 0;
-        final double ARM_SCORE_SAMPLE_IN_LOW   = 1000;
+        final double ARM_COLLECT               = -2000;
+        final double ARM_CLEAR_BARRIER         = -1000;
+        final double ARM_SCORE_SPECIMEN        = 400;
+        final double ARM_SCORE_SAMPLE_IN_LOW   = 10;
+        final double ARM_SCORE_SAMPLE_IN_HIGH   = -2500;
         final double ARM_ATTACH_HANGING_HOOK   = 0;
         final double FUDGE_FACTOR = 15;
         //public Motor arm;
