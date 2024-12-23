@@ -35,6 +35,10 @@ public class TeleOpV2 extends LinearOpMode {
 
     public LazyImu lazyImu;
 
+    boolean armToggleDefault = true;
+    boolean armToggle = armToggleDefault;
+    int lastArmButtonPressed = 0;
+
     public static org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive.Params PARAMS = new org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive.Params();
 
     //start of opmode, inside this function will be your main while loop and initialize all hardware objects
@@ -98,6 +102,9 @@ public class TeleOpV2 extends LinearOpMode {
             }
             runningActions = newActions;
 
+            if (lastArmButtonPressed!=4){
+                armToggle = armToggleDefault;
+            }
 
             //read controller buttons
             driver1.readButtons();
@@ -112,11 +119,12 @@ public class TeleOpV2 extends LinearOpMode {
                 }
 
                 if (driver2.getButton(GamepadKeys.Button.A)) {
+                    lastArmButtonPressed = 1;
                     runningActions.add(new ParallelAction(
                             arm.armCollect(),
                             wrist.foldOutWrist(),
                             intake.intakeCollect()
-                            ,slide.armCollect()
+                            , slide.armCollect()
                     ));
                 } else if (driver2.getButton(GamepadKeys.Button.LEFT_BUMPER)) {
                     runningActions.add(new ParallelAction(
@@ -131,6 +139,7 @@ public class TeleOpV2 extends LinearOpMode {
                             intake.intakeDeposit()
                     ));
                 } else if (driver2.getButton(GamepadKeys.Button.X)) {
+                    lastArmButtonPressed = 2;
                     runningActions.add(new ParallelAction(
                             arm.armClear()
                             ,slide.armClear()
@@ -140,19 +149,33 @@ public class TeleOpV2 extends LinearOpMode {
                             wrist.foldOutWrist()
                     ));
                 } else if (driver2.getButton(GamepadKeys.Button.DPAD_LEFT)) {
+                    lastArmButtonPressed = 3;
                     runningActions.add(new ParallelAction(
                             arm.armCollapse(),
                             intake.intakeOff(),
                             wrist.foldInWrist()
                             ,slide.armCollapse()
                     ));
-                }  else if (driver2.getButton(GamepadKeys.Button.DPAD_RIGHT)) {
+                }  else if (driver2.wasJustPressed(GamepadKeys.Button.DPAD_RIGHT)) {
+                    lastArmButtonPressed = 4;
                     runningActions.add(new ParallelAction(
-                            arm.armScoreLow(),
                             wrist.foldOutWrist()
-                            ,slide.armScoreLow()
                     ));
+                    if (armToggle) {
+                        armToggle = false;
+                        runningActions.add(new ParallelAction(
+                                arm.armScoreHigh(),
+                                slide.armScoreHigh()
+                        ));
+                    } else {
+                        armToggle = true;
+                        runningActions.add(new ParallelAction(
+                                arm.armScoreLow(),
+                                slide.armScoreLow()
+                        ));
+                    }
                 }  else if (driver2.getButton(GamepadKeys.Button.DPAD_UP)) {
+                    lastArmButtonPressed = 5;
                     runningActions.add(new ParallelAction(
                             arm.armAttachHangingHook(),
                             intake.intakeOff(),
@@ -160,6 +183,7 @@ public class TeleOpV2 extends LinearOpMode {
                             ,slide.armAttachHangingHook()
                     ));
                 }  else if (driver2.getButton(GamepadKeys.Button.DPAD_DOWN)) {
+                    lastArmButtonPressed = 6;
                     runningActions.add(new ParallelAction(
                             arm.armScoreSpecimen(),
                             wrist.foldOutWristSpecimen()

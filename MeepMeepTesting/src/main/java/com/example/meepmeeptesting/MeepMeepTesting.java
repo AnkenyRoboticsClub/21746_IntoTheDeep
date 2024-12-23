@@ -48,16 +48,18 @@ public class MeepMeepTesting {
                 .build();
 
         mySecondBot.runAction(mySecondBot.getDrive().actionBuilder(new Pose2d(-33, -63, Math.toRadians(-90)))
-                .strafeToLinearHeading(new Vector2d(-25, -36), Math.toRadians(-20))
-                .strafeToLinearHeading(new Vector2d(-31, -34), Math.toRadians(-20))
-                .strafeToLinearHeading(new Vector2d(-52, -52), Math.toRadians(45))
+                .strafeToLinearHeading(new Vector2d(-52, -52), Math.toRadians(225))
+                .strafeToLinearHeading(new Vector2d(-25, -36), Math.toRadians(160))
+                .strafeToLinearHeading(new Vector2d(-32, -32), Math.toRadians(160))
+                .strafeToLinearHeading(new Vector2d(-52, -52), Math.toRadians(225))
+                .strafeToLinearHeading(new Vector2d(-36, -32), Math.toRadians(90))
                 .build());
 
         meepMeep.setBackground(MeepMeep.Background.FIELD_INTO_THE_DEEP_JUICE_DARK)
                 .setDarkMode(true)
                 .setBackgroundAlpha(0.95f)
                 // Add both of our declared bot entities
-                .addEntity(myFirstBot)
+                //.addEntity(myFirstBot)
                 .addEntity(mySecondBot)
                 .start();
     }
