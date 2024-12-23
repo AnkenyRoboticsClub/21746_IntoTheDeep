@@ -43,20 +43,6 @@ public class TeleOpV2 extends LinearOpMode {
         //New LazyIMU
         lazyImu = new LazyImu(hardwareMap, "imu", new RevHubOrientationOnRobot(PARAMS.logoFacingDirection, PARAMS.usbFacingDirection));
 
-        //IMU intialization, you will need to change this to  match your imu
-            /*imu = hardwareMap.get(AdafruitBNO055IMU.class, "imu");
-            BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-            parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
-            imu.initialize(parameters);*/
-        // Retrieve the IMU from the hardware map
-        /*IMU imu = hardwareMap.get(IMU.class, "imu");
-        // Adjust the orientation parameters to match your robot
-        IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
-                RevHubOrientationOnRobot.LogoFacingDirection.UP,
-                RevHubOrientationOnRobot.UsbFacingDirection.LEFT));
-        // Without this, the REV Hub's orientation is assumed to be logo up / USB forward
-        imu.initialize(parameters);*/
-
         //initialize motors, you will need to change these parameters to match your motor setup and names.
             Motor leftFront = new Motor(hardwareMap, "leftFront", Motor.GoBILDA.RPM_312);
             Motor rightFront = new Motor(hardwareMap, "rightFront", Motor.GoBILDA.RPM_312);
@@ -86,22 +72,11 @@ public class TeleOpV2 extends LinearOpMode {
             GamepadEx driver1 = new GamepadEx(gamepad1);
             GamepadEx driver2 = new GamepadEx(gamepad2);
 
-
-        //initialize claw servo object from our mechanisms file
-            //Mechanisms.Claw claw = new Mechanisms.Claw(hardwareMap);
-
-        //initialize lift motor object from our mechanimsms file
-            //Mechanisms.Lift lift = new Mechanisms.Lift(hardwareMap);
-
-        //intialize intake motor from our mechanisms file
-            //Mechanisms.Intake intake = new Mechanisms.Intake(hardwareMap);
-
         //initialize new mechanisms!
             Mechanisms.Intake intake = new Mechanisms.Intake(hardwareMap);
             Mechanisms.Wrist wrist = new Mechanisms.Wrist(hardwareMap);
             Mechanisms.Arm arm = new Mechanisms.Arm(hardwareMap);
             Mechanisms.Slide slide = new Mechanisms.Slide(hardwareMap);
-
 
         //wait for the driver station to start
             waitForStart();
@@ -125,10 +100,9 @@ public class TeleOpV2 extends LinearOpMode {
 
 
             //read controller buttons
-                driver1.readButtons();
-                driver2.readButtons();
+            driver1.readButtons();
+            driver2.readButtons();
 
-                //armPositionFudgeFactor = FUDGE_FACTOR * (gamepad2.right_trigger + (-gamepad2.left_trigger) + gamepad1.right_trigger + (-gamepad1.left_trigger));
             double rightTrig2 = driver2.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER);
             double leftTrig2 = driver2.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER);
             arm.armPositionFudgeFactor = (int) (arm.FUDGE_FACTOR * (rightTrig2-leftTrig2));
@@ -138,10 +112,6 @@ public class TeleOpV2 extends LinearOpMode {
                 }
 
                 if (driver2.getButton(GamepadKeys.Button.A)) {
-                    /*armPosition = ARM_COLLECT;
-                    //liftPosition = LIFT_COLLAPSED;
-                    wrist.setPosition(WRIST_FOLDED_OUT);
-                    intake.setPower(INTAKE_COLLECT);*/
                     runningActions.add(new ParallelAction(
                             arm.armCollect(),
                             wrist.foldOutWrist(),
@@ -202,79 +172,6 @@ public class TeleOpV2 extends LinearOpMode {
                     ,slide.armRun()
             ));
 
-            //example of claw control
-                /*if (driver1.wasJustPressed(GamepadKeys.Button.A)) {
-                    runningActions.add(new SequentialAction(
-                            //claw.openClaw()
-                            intake.intakeCollect()
-
-                    ));
-                }
-                else if (driver1.wasJustPressed(GamepadKeys.Button.B)) {
-                    runningActions.add(new SequentialAction(
-                            //claw.closeClaw()
-                            intake.intakeOff()
-                    ));
-                }
-
-            //example of lift control
-                //can use .wasJustPressed because the lift target position only needs to change once.
-                    if(driver1.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER)) {
-                        runningActions.add(new SequentialAction(
-                                //lift.liftUp()
-                                arm.armScoreLow()
-                        ));
-                    }
-                    else if (driver1.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER)) {
-                        runningActions.add(new SequentialAction(
-                                //lift.liftDown()
-                                arm.armCollapse()
-                        ));
-                    }
-
-            //example of intake control
-                //use an if else statement first so that theres a tolerance before it starts moving the motor
-                    if(driver1.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.1) {
-                            //call the spin intake forward function
-                        runningActions.add(new SequentialAction(
-                                //intake.spinForward()
-                        ));
-                    }
-                    else if(driver1.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.1) {
-                            //call the spin intake backward function
-                        runningActions.add(new SequentialAction(
-                                //intake.spinBackward()
-                        ));
-                    }*/
-
-
-            /*Code to automatically reset the imu to the last known setting if it gets reset because of static.
-            I highly recommend leaving this unchanged unless you know what you're doing*/
-            /*
-            //get imu value as a variable
-                imuValue = imu.getAngularOrientation().firstAngle + imuDifference;
-            //find difference between current and previous values, wrapped around 360
-                imuWrap = prevImuValue - imuValue;
-                imuWrap -= 360 * Math.floor(0.5 + imuWrap / 360);
-            //if difference between previous
-                if(Math.abs(imuWrap) > 30) {
-                    leftFront.set(0); rightFront.set(0); leftBack.set(0); rightBack.set(0);
-                    //give driver feedback in the form of a short rumble if the imu has to reset because of static
-                    gamepad1.rumble(500);
-                    imu.initialize();
-                    imuDifference = imuWrap;
-                    imuValue = imu.getAngularOrientation().firstAngle + imuDifference;
-                }
-                prevImuValue = imuValue;
-
-            */
-            //Code to manually reset the imu, you can change this to whatever button you want
-                /*if (driver1.getButton(GamepadKeys.Button.DPAD_DOWN)) {
-                    imu.initialize();
-                    imuValue = 0;
-                    prevImuValue = 0;
-                    imuDifference = 0;
-                }*/
             /*call our mecanum drive function from ftclib using field centric control,
             if you want robotcentric, change "Field" to "Robot" and remove the imuValue variable,
             if you want exponential drive turned off, change the last variable to false*/
@@ -295,8 +192,8 @@ public class TeleOpV2 extends LinearOpMode {
             telemetry.addData("lazyImu: ", lazyImu.get().getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
             telemetry.addData("arm encoder: ", arm.armMotor.getCurrentPosition());
             telemetry.addData("arm target: ", arm.armMotor.getTargetPosition());
-            telemetry.addData("slide encoder: ", slide.armSlideMotor.getCurrentPosition());
-            telemetry.addData("slide target: ", slide.armSlideMotor.getTargetPosition());
+            telemetry.addData("slide encoder: ", slide.armMotor.getCurrentPosition());
+            telemetry.addData("slide target: ", slide.armMotor.getTargetPosition());
             telemetry.update();
         }
     }

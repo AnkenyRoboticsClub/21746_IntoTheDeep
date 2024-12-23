@@ -11,21 +11,14 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
-//import java.util.Timer;
-
 public class Mechanisms {
 
     //class to create a wrist
     public static class Wrist {
         private Servo wrist;
-        //create the claw object from hardware map
-
         public Wrist(HardwareMap hardwareMap) {
             wrist = hardwareMap.get(Servo.class, "wrist");
         }
-
-        //implement action class in our close claw function.
-
         public class FoldInWrist implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
@@ -39,8 +32,6 @@ public class Mechanisms {
             return new Wrist.FoldInWrist();
         }
         //create an foldinwrist function by implementing action class
-
-
         public class FoldOutWrist implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
@@ -53,11 +44,9 @@ public class Mechanisms {
         public Action foldOutWrist() {
             return new Wrist.FoldOutWrist();
         }
-
         public class FoldOutWristSpecimen implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                //when openclaw is run, set the claw to the open position
                 wrist.setPosition(0.7);
                 return false;
             }
@@ -73,7 +62,7 @@ public class Mechanisms {
         private boolean firstTime = false;
         private double timer = 0;
         private int intakeTime =100000;
-        //create the claw object from hardware map
+        //how many times it runs so that it will let it run for a bit before moving to the next action in auto
 
         public Intake(HardwareMap hardwareMap) {
             intake = hardwareMap.get(CRServo.class, "intake");
@@ -84,7 +73,6 @@ public class Mechanisms {
         public class IntakeCollect implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                //when closeclaw is run, set the claw to closed position
                 intake.setPower(1);
                 //return false;
                 if (!firstTime) {
@@ -108,11 +96,9 @@ public class Mechanisms {
             return new Intake.IntakeCollect();
         }
         //create an intakecollect function by implementing action class
-
         public class IntakeOff implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                //when openclaw is run, set the claw to the open position
                 intake.setPower(0);
                 //return false;
                 if (!firstTime) {
@@ -139,7 +125,6 @@ public class Mechanisms {
         public class IntakeDeposit implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                //when openclaw is run, set the claw to the open position
                 intake.setPower(-0.5);
                 //return false;
                 if (!firstTime) {
@@ -164,47 +149,6 @@ public class Mechanisms {
         }
     }
 
-    //use as a example for servos!
-    //class to create a claw
-    /*public static class Claw {
-        private Servo claw;
-        //create the claw object from hardware map
-
-        public Claw(HardwareMap hardwareMap) {
-            claw = hardwareMap.get(Servo.class, "claw");
-        }
-
-        //implement action class in our close claw function.
-
-        public class CloseClaw implements Action {
-            @Override
-            public boolean run(@NonNull TelemetryPacket packet) {
-                //when closeclaw is run, set the claw to closed position
-                claw.setPosition(0.55);
-                return false;
-            }
-        }
-        //allow the function to be able to called from other files
-        public Action closeClaw() {
-            return new Claw.CloseClaw();
-        }
-        //create an openclaw function by implementing action class
-
-        public class OpenClaw implements Action {
-            @Override
-            public boolean run(@NonNull TelemetryPacket packet) {
-                //when openclaw is run, set the claw to the open position
-                claw.setPosition(1.0);
-                return false;
-            }
-        }
-        //allow the function to be able to be called from other files
-        public Action openClaw() {
-            return new Claw.OpenClaw();
-        }
-    }
-    */
-
     public static class Arm {
         final double ARM_TICKS_PER_DEGREE =
                 28 // number of encoder ticks per rotation of the bare motor
@@ -212,15 +156,15 @@ public class Mechanisms {
                         * 100.0 / 20.0 // This is the external gear reduction, a 20T pinion gear that drives a 100T hub-mount gear
                         * 1/360.0; // we want ticks per degree, not per rotation
         //values copied from TeleOpV3
-        final double ARM_COLLAPSED_INTO_ROBOT  = 0;
-        final double ARM_COLLECT               = 17 * ARM_TICKS_PER_DEGREE;
-        final double ARM_CLEAR_BARRIER         = 25 * ARM_TICKS_PER_DEGREE;
-        final double ARM_SCORE_SPECIMEN        = 68 * ARM_TICKS_PER_DEGREE;
-        final double ARM_SCORE_SAMPLE_IN_LOW   = 83 * ARM_TICKS_PER_DEGREE;
-        final double ARM_SCORE_SAMPLE_IN_HIGH   = 84 * ARM_TICKS_PER_DEGREE;
-        final double ARM_ATTACH_HANGING_HOOK   = 100 * ARM_TICKS_PER_DEGREE;
-        final double ARM_WINCH_ROBOT           = 10  * ARM_TICKS_PER_DEGREE;
-        final double FUDGE_FACTOR = 15 * ARM_TICKS_PER_DEGREE;
+        final int ARM_COLLAPSED_INTO_ROBOT  = 0;
+        final int ARM_COLLECT               = (int) (17 * ARM_TICKS_PER_DEGREE);
+        final int ARM_CLEAR_BARRIER         = (int) (25 * ARM_TICKS_PER_DEGREE);
+        final int ARM_SCORE_SPECIMEN        = (int) (68 * ARM_TICKS_PER_DEGREE);
+        final int ARM_SCORE_SAMPLE_IN_LOW   = (int) (83 * ARM_TICKS_PER_DEGREE);
+        final int ARM_SCORE_SAMPLE_IN_HIGH   = (int) (84 * ARM_TICKS_PER_DEGREE);
+        final int ARM_ATTACH_HANGING_HOOK   = (int) (100 * ARM_TICKS_PER_DEGREE);
+        final int ARM_WINCH_ROBOT           = (int) (10  * ARM_TICKS_PER_DEGREE);
+        final int FUDGE_FACTOR = (int) (15 * ARM_TICKS_PER_DEGREE);
         //public Motor arm;
         public DcMotor armMotor;
         public int target;
@@ -245,183 +189,179 @@ public class Mechanisms {
             armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         }
-
-        public class ArmRunPosition implements Action {
+        public boolean RunToPos(@NonNull TelemetryPacket packet) {
+            //set the target position of the lift to 3000 ticks
+            armMotor.setTargetPosition(target+armPositionFudgeFactor);
+            //((DcMotorEx) armMotor).setVelocity(2100);
+            int tolerance = ((DcMotorEx) armMotor).getTargetPositionTolerance()+2;
+            armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            //return false;
+            if ((Math.abs(armMotor.getCurrentPosition()-armMotor.getTargetPosition())>tolerance)) {
+                // true causes the action to rerun
+                return true;
+            } else {
+                //false stops action rerun and stops the arm
+                return false;
+            }
+        }
+        public class ArmScoreLow implements Action {
             // checks if the lift motor has been powered on
             private boolean initialized = false;
             // actions are formatted via telemetry packets as below
-
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
                 // powers on motor, if it is not on
                 if (!initialized) {
+                    target = ARM_SCORE_SAMPLE_IN_LOW;
                     armMotor.setPower(0.8);
                     initialized = true;
                 }
-                //set the target position of the lift to 3000 ticks
-                armMotor.setTargetPosition(target+armPositionFudgeFactor);
-                //((DcMotorEx) armMotor).setVelocity(2100);
-                int tolerance = ((DcMotorEx) armMotor).getTargetPositionTolerance()+2;
-                armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                //return false;
-                if ((Math.abs(armMotor.getCurrentPosition()-armMotor.getTargetPosition())>tolerance)) {
-                    // true causes the action to rerun
-                    return true;
-                } else {
-                    //false stops action rerun and stops the arm
-                    //arm.set(0);
-                    return false;
-                }
-                // overall, the action powers the lift until it surpasses
-                // 3000 encoder ticks, then powers it off2
+                return RunToPos(packet);
             }
         }
-        public class ArmRunPositionCollect implements Action {
-            //made to fix my cheat coding b4
-            // checks if the lift motor has been powered on
-            private boolean initialized = false;
-            // actions are formatted via telemetry packets as below
-
-            @Override
-            public boolean run(@NonNull TelemetryPacket packet) {
-                // powers on motor, if it is not on
-                if (!initialized) {
-                    armMotor.setPower(0.8);
-                    initialized = true;
-                }
-                //set the target position of the lift to 3000 ticks
-                armMotor.setTargetPosition((int) ARM_COLLECT);
-                //((DcMotorEx) armMotor).setVelocity(2100);
-                int tolerance = ((DcMotorEx) armMotor).getTargetPositionTolerance()+2;
-                armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                //return false;
-                if ((Math.abs(armMotor.getCurrentPosition()-armMotor.getTargetPosition())>tolerance)) {
-                    // true causes the action to rerun
-                    return true;
-                } else {
-                    //false stops action rerun and stops the arm
-                    //arm.set(0);
-                    return false;
-                }
-            }
-        }
-
-        public class ArmRunPositionScoreLow implements Action {
-            //made to fix my cheat coding b4
-            // checks if the lift motor has been powered on
-            private boolean initialized = false;
-            // actions are formatted via telemetry packets as below
-
-            @Override
-            public boolean run(@NonNull TelemetryPacket packet) {
-                // powers on motor, if it is not on
-                if (!initialized) {
-                    armMotor.setPower(0.8);
-                    initialized = true;
-                }
-                //set the target position of the lift to 3000 ticks
-                armMotor.setTargetPosition((int) ARM_SCORE_SAMPLE_IN_LOW+10);
-                //((DcMotorEx) armMotor).setVelocity(2100);
-                int tolerance = ((DcMotorEx) armMotor).getTargetPositionTolerance()+2;
-                armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                //return false;
-                if ((Math.abs(armMotor.getCurrentPosition()-armMotor.getTargetPosition())>tolerance)) {
-                    // true causes the action to rerun
-                    return true;
-                } else {
-                    //false stops action rerun and stops the arm
-                    //arm.set(0);
-                    return false;
-                }
-            }
-        }
-
-        public class ArmRunPositionCollapse implements Action {
-            //made to fix my cheat coding b4
-            // checks if the lift motor has been powered on
-            private boolean initialized = false;
-            // actions are formatted via telemetry packets as below
-
-            @Override
-            public boolean run(@NonNull TelemetryPacket packet) {
-                // powers on motor, if it is not on
-                if (!initialized) {
-                    armMotor.setPower(0.8);
-                    initialized = true;
-                }
-                //set the target position of the lift to 3000 ticks
-                armMotor.setTargetPosition((int) ARM_COLLAPSED_INTO_ROBOT);
-                //((DcMotorEx) armMotor).setVelocity(2100);
-                int tolerance = ((DcMotorEx) armMotor).getTargetPositionTolerance()+2;
-                armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                //return false;
-                if ((Math.abs(armMotor.getCurrentPosition()-armMotor.getTargetPosition())>tolerance)) {
-                    // true causes the action to rerun
-                    return true;
-                } else {
-                    //false stops action rerun and stops the arm
-                    //arm.set(0);
-                    return false;
-                }
-            }
-        }
-
         public Action armScoreLow() {
-            target = (int) ARM_SCORE_SAMPLE_IN_LOW;
-            return new ArmRunPosition();
+            return new ArmScoreLow();
         }
-
-        public Action armScoreLowFix() {
-            return new ArmRunPositionScoreLow();
+        public class ArmScoreHigh implements Action {
+            // checks if the lift motor has been powered on
+            private boolean initialized = false;
+            // actions are formatted via telemetry packets as below
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                // powers on motor, if it is not on
+                if (!initialized) {
+                    target = ARM_SCORE_SAMPLE_IN_LOW;
+                    armMotor.setPower(0.8);
+                    initialized = true;
+                }
+                return RunToPos(packet);
+            }
+        }
+        public Action armScoreHigh() {
+            return new ArmScoreHigh();
+        }
+        public class ArmCollapse implements Action {
+            // checks if the lift motor has been powered on
+            private boolean initialized = false;
+            // actions are formatted via telemetry packets as below
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                // powers on motor, if it is not on
+                if (!initialized) {
+                    target = ARM_COLLAPSED_INTO_ROBOT;
+                    armMotor.setPower(0.8);
+                    initialized = true;
+                }
+                return RunToPos(packet);
+            }
         }
         public Action armCollapse(){
-            target = (int) ARM_COLLAPSED_INTO_ROBOT;
-            return new ArmRunPosition();
+            return new ArmCollapse();
         }
-
-        public Action armCollapseFix(){
-            return new ArmRunPositionCollapse();
+        public class ArmCollect implements Action {
+            // checks if the lift motor has been powered on
+            private boolean initialized = false;
+            // actions are formatted via telemetry packets as below
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                // powers on motor, if it is not on
+                if (!initialized) {
+                    target = ARM_COLLECT;
+                    armMotor.setPower(0.8);
+                    initialized = true;
+                }
+                return RunToPos(packet);
+            }
         }
-
         public Action armCollect(){
-            target = (int) ARM_COLLECT;
-            return new ArmRunPosition();
+            return new ArmCollect();
         }
-
-        public Action armCollectFix(){
-            return new ArmRunPositionCollect();
+        public class ArmHangingHook implements Action {
+            // checks if the lift motor has been powered on
+            private boolean initialized = false;
+            // actions are formatted via telemetry packets as below
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                // powers on motor, if it is not on
+                if (!initialized) {
+                    target = ARM_ATTACH_HANGING_HOOK;
+                    armMotor.setPower(0.8);
+                    initialized = true;
+                }
+                return RunToPos(packet);
+            }
         }
-
         public Action armAttachHangingHook(){
-            target = (int) ARM_ATTACH_HANGING_HOOK;
-            return new ArmRunPosition();
+            return new ArmHangingHook();
+        }
+        public class ArmClear implements Action {
+            // checks if the lift motor has been powered on
+            private boolean initialized = false;
+            // actions are formatted via telemetry packets as below
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                // powers on motor, if it is not on
+                if (!initialized) {
+                    target = ARM_CLEAR_BARRIER;
+                    armMotor.setPower(0.8);
+                    initialized = true;
+                }
+                return RunToPos(packet);
+            }
         }
         public Action armClear(){
-            target = (int) ARM_CLEAR_BARRIER;
-            return new ArmRunPosition();
+            return new ArmClear();
         }
+        public class ArmScoreSpecimen implements Action {
+            // checks if the lift motor has been powered on
+            private boolean initialized = false;
 
+            // actions are formatted via telemetry packets as below
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                // powers on motor, if it is not on
+                if (!initialized) {
+                    target = ARM_SCORE_SPECIMEN;
+                    armMotor.setPower(0.8);
+                    initialized = true;
+                }
+                return RunToPos(packet);
+            }
+        }
         public Action armScoreSpecimen(){
-            target = (int) ARM_SCORE_SPECIMEN;
-            return new ArmRunPosition();
+            return new ArmScoreSpecimen();
         }
+        public class ArmRun implements Action {
+            // checks if the lift motor has been powered on
+            private boolean initialized = false;
 
+            // actions are formatted via telemetry packets as below
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                // powers on motor, if it is not on
+                if (!initialized) {
+                    armMotor.setPower(0.8);
+                    initialized = true;
+                }
+                return RunToPos(packet);
+            }
+        }
         public Action armRun(){
-            return new ArmRunPosition();
+            return new ArmRun();
         }
     }
 
     public static class Slide {
-        final double ARM_COLLAPSED_INTO_ROBOT  = 0;
-        final double ARM_COLLECT               = -2000;
-        final double ARM_CLEAR_BARRIER         = -1000;
-        final double ARM_SCORE_SPECIMEN        = 400;
-        final double ARM_SCORE_SAMPLE_IN_LOW   = 10;
-        final double ARM_SCORE_SAMPLE_IN_HIGH   = -2500;
-        final double ARM_ATTACH_HANGING_HOOK   = 0;
-        final double FUDGE_FACTOR = 15;
+        final int ARM_COLLAPSED_INTO_ROBOT  = 0;
+        final int ARM_COLLECT               = -2000;
+        final int ARM_CLEAR_BARRIER         = -1000;
+        final int ARM_SCORE_SPECIMEN        = 400;
+        final int ARM_SCORE_SAMPLE_IN_LOW   = 10;
+        final int ARM_SCORE_SAMPLE_IN_HIGH   = -2500;
+        final int ARM_ATTACH_HANGING_HOOK   = 0;
+        final int FUDGE_FACTOR = 15;
         //public Motor arm;
-        public DcMotor armSlideMotor;
+        public DcMotor armMotor;
         public int target;
         public int armPositionFudgeFactor;
         //create lift from hardwaremap and initialize it
@@ -437,75 +377,173 @@ public class Mechanisms {
             //arm.setInverted(true);
             //set position coefficient of the lift, (p value)
             arm.setPositionCoefficient(0.001);*/
-            armSlideMotor = hardwareMap.get(DcMotor.class, "arm_slide"); //the arm motor
-            armSlideMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            armSlideMotor.setTargetPosition(0);
-            armSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            armSlideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            armMotor = hardwareMap.get(DcMotor.class, "arm_slide"); //the arm motor
+            armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            armMotor.setTargetPosition(0);
+            armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         }
 
-        public class ArmRunPosition implements Action {
+        public boolean RunToPos(@NonNull TelemetryPacket packet) {
+            //set the target position of the lift to 3000 ticks
+            armMotor.setTargetPosition(target+armPositionFudgeFactor);
+            //((DcMotorEx) armMotor).setVelocity(2100);
+            int tolerance = ((DcMotorEx) armMotor).getTargetPositionTolerance()+2;
+            armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            //return false;
+            if ((Math.abs(armMotor.getCurrentPosition()-armMotor.getTargetPosition())>tolerance)) {
+                // true causes the action to rerun
+                return true;
+            } else {
+                //false stops action rerun and stops the arm
+                return false;
+            }
+        }
+        public class ArmScoreLow implements Action {
             // checks if the lift motor has been powered on
             private boolean initialized = false;
             // actions are formatted via telemetry packets as below
-
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
                 // powers on motor, if it is not on
                 if (!initialized) {
-                    armSlideMotor.setPower(0.8);
+                    target = ARM_SCORE_SAMPLE_IN_LOW;
+                    armMotor.setPower(0.8);
                     initialized = true;
                 }
-                //set the target position of the lift to 3000 ticks
-                armSlideMotor.setTargetPosition(target+armPositionFudgeFactor);
-                //((DcMotorEx) armMotor).setVelocity(2100);
-                int tolerance = ((DcMotorEx) armSlideMotor).getTargetPositionTolerance()+2;
-                armSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                //return false;
-                if ((Math.abs(armSlideMotor.getCurrentPosition()-armSlideMotor.getTargetPosition())>tolerance)) {
-                    // true causes the action to rerun
-                    return true;
-                } else {
-                    //false stops action rerun and stops the arm
-                    //arm.set(0);
-                    return false;
-                }
-                // overall, the action powers the lift until it surpasses
-                // 3000 encoder ticks, then powers it off2
+                return RunToPos(packet);
             }
         }
-
         public Action armScoreLow() {
-            target = (int) ARM_SCORE_SAMPLE_IN_LOW;
-            return new ArmRunPosition();
+            return new Slide.ArmScoreLow();
+        }
+        public class ArmScoreHigh implements Action {
+            // checks if the lift motor has been powered on
+            private boolean initialized = false;
+            // actions are formatted via telemetry packets as below
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                // powers on motor, if it is not on
+                if (!initialized) {
+                    target = ARM_SCORE_SAMPLE_IN_LOW;
+                    armMotor.setPower(0.8);
+                    initialized = true;
+                }
+                return RunToPos(packet);
+            }
+        }
+        public Action armScoreHigh() {
+            return new Slide.ArmScoreHigh();
+        }
+        public class ArmCollapse implements Action {
+            // checks if the lift motor has been powered on
+            private boolean initialized = false;
+            // actions are formatted via telemetry packets as below
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                // powers on motor, if it is not on
+                if (!initialized) {
+                    target = ARM_COLLAPSED_INTO_ROBOT;
+                    armMotor.setPower(0.8);
+                    initialized = true;
+                }
+                return RunToPos(packet);
+            }
         }
         public Action armCollapse(){
-            target = (int) ARM_COLLAPSED_INTO_ROBOT;
-            return new ArmRunPosition();
+            return new Slide.ArmCollapse();
         }
-
+        public class ArmCollect implements Action {
+            // checks if the lift motor has been powered on
+            private boolean initialized = false;
+            // actions are formatted via telemetry packets as below
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                // powers on motor, if it is not on
+                if (!initialized) {
+                    target = ARM_COLLECT;
+                    armMotor.setPower(0.8);
+                    initialized = true;
+                }
+                return RunToPos(packet);
+            }
+        }
         public Action armCollect(){
-            target = (int) ARM_COLLECT;
-            return new ArmRunPosition();
+            return new Slide.ArmCollect();
         }
-
+        public class ArmHangingHook implements Action {
+            // checks if the lift motor has been powered on
+            private boolean initialized = false;
+            // actions are formatted via telemetry packets as below
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                // powers on motor, if it is not on
+                if (!initialized) {
+                    target = ARM_ATTACH_HANGING_HOOK;
+                    armMotor.setPower(0.8);
+                    initialized = true;
+                }
+                return RunToPos(packet);
+            }
+        }
         public Action armAttachHangingHook(){
-            target = (int) ARM_ATTACH_HANGING_HOOK;
-            return new ArmRunPosition();
+            return new Slide.ArmHangingHook();
+        }
+        public class ArmClear implements Action {
+            // checks if the lift motor has been powered on
+            private boolean initialized = false;
+            // actions are formatted via telemetry packets as below
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                // powers on motor, if it is not on
+                if (!initialized) {
+                    target = ARM_CLEAR_BARRIER;
+                    armMotor.setPower(0.8);
+                    initialized = true;
+                }
+                return RunToPos(packet);
+            }
         }
         public Action armClear(){
-            target = (int) ARM_CLEAR_BARRIER;
-            return new ArmRunPosition();
+            return new Slide.ArmClear();
         }
+        public class ArmScoreSpecimen implements Action {
+            // checks if the lift motor has been powered on
+            private boolean initialized = false;
 
+            // actions are formatted via telemetry packets as below
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                // powers on motor, if it is not on
+                if (!initialized) {
+                    target = ARM_SCORE_SPECIMEN;
+                    armMotor.setPower(0.8);
+                    initialized = true;
+                }
+                return RunToPos(packet);
+            }
+        }
         public Action armScoreSpecimen(){
-            target = (int) ARM_SCORE_SPECIMEN;
-            return new ArmRunPosition();
+            return new Slide.ArmScoreSpecimen();
         }
+        public class ArmRun implements Action {
+            // checks if the lift motor has been powered on
+            private boolean initialized = false;
 
+            // actions are formatted via telemetry packets as below
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                // powers on motor, if it is not on
+                if (!initialized) {
+                    armMotor.setPower(0.8);
+                    initialized = true;
+                }
+                return RunToPos(packet);
+            }
+        }
         public Action armRun(){
-            return new ArmRunPosition();
+            return new Slide.ArmRun();
         }
     }
 

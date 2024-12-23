@@ -45,15 +45,12 @@ public class LeftAutoV2 extends LinearOpMode {
 
         TrajectoryActionBuilder traj1 = drive.actionBuilder(initialPose)
                 .strafeToLinearHeading(new Vector2d(-52, -52), Math.toRadians(45))
-                .afterTime(0, arm.armScoreLowFix())
+                //.afterTime(0, arm.armScoreLowFix()) //changing arm class
                 .afterTime(0, wrist.foldOutWrist())
                 ;
 
         TrajectoryActionBuilder traj2 = traj1.endTrajectory().fresh()
                 .strafeToLinearHeading(new Vector2d(-25, -36), Math.toRadians(-20))
-                //.afterTime(0.1, arm.armCollect())
-                //.afterTime(0, wrist.foldOutWrist())
-                //.afterTime(0, intake.intakeCollect())
                 ;
 
         TrajectoryActionBuilder traj3 = traj2.endTrajectory().fresh()
@@ -61,13 +58,11 @@ public class LeftAutoV2 extends LinearOpMode {
                 ;
         TrajectoryActionBuilder traj4 = traj3.endTrajectory().fresh()
                 .strafeToLinearHeading(new Vector2d(-52, -52), Math.toRadians(45))
-                //.afterTime(0, intake.intakeOff())
-                //.afterTime(0, arm.armScoreLow())
                 ;
         TrajectoryActionBuilder traj5 = traj4.endTrajectory().fresh()
                 .strafeToLinearHeading(new Vector2d(-36, -32), Math.toRadians(90))
                 .afterTime(0, wrist.foldInWrist())
-                .afterTime(0, arm.armCollapseFix())
+                //.afterTime(0, arm.armCollapseFix()) //changing arm class
                 ;
 
         //wait for autonomous to start
@@ -83,13 +78,13 @@ public class LeftAutoV2 extends LinearOpMode {
                         , wrist.foldOutWrist()
                         , intake.intakeDeposit()
                         , traj2.build()
-                        , arm.armCollectFix()
+                        //, arm.armCollectFix() //changing arm class
                         , wrist.foldOutWrist()
                         , intake.intakeCollect()
                         , traj3.build()
                         , intake.intakeCollect()
                         , intake.intakeOff()
-                        , arm.armScoreLowFix()
+                        //, arm.armScoreLowFix() //changing arm class
                         , traj4.build()
                         , intake.intakeDeposit()
                         , traj5.build()
