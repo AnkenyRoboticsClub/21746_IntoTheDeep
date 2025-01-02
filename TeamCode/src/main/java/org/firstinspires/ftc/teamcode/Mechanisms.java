@@ -156,15 +156,16 @@ public class Mechanisms {
                         * 100.0 / 20.0 // This is the external gear reduction, a 20T pinion gear that drives a 100T hub-mount gear
                         * 1/360.0; // we want ticks per degree, not per rotation
         //values copied from TeleOpV3
-        final int ARM_COLLAPSED_INTO_ROBOT  = 0;
+        final int ARM_COLLAPSED_INTO_ROBOT  = 10;
         final int ARM_COLLECT               = (int) (17 * ARM_TICKS_PER_DEGREE);
+        final int ARM_COLLECT_LOW               = (int) (4 * ARM_TICKS_PER_DEGREE);
         final int ARM_CLEAR_BARRIER         = (int) (25 * ARM_TICKS_PER_DEGREE);
-        final int ARM_SCORE_SPECIMEN        = (int) (68 * ARM_TICKS_PER_DEGREE);
+        final int ARM_SCORE_SPECIMEN        = (int) (64 * ARM_TICKS_PER_DEGREE);
         final int ARM_SCORE_SAMPLE_IN_LOW   = (int) (83 * ARM_TICKS_PER_DEGREE);
-        final int ARM_SCORE_SAMPLE_IN_HIGH   = (int) (84 * ARM_TICKS_PER_DEGREE);
-        final int ARM_ATTACH_HANGING_HOOK   = (int) (100 * ARM_TICKS_PER_DEGREE);
+        final int ARM_SCORE_SAMPLE_IN_HIGH   = (int) (87 * ARM_TICKS_PER_DEGREE);
+        final int ARM_ATTACH_HANGING_HOOK   = (int) (110 * ARM_TICKS_PER_DEGREE);
         final int ARM_WINCH_ROBOT           = (int) (10  * ARM_TICKS_PER_DEGREE);
-        final int FUDGE_FACTOR = (int) (15 * ARM_TICKS_PER_DEGREE);
+        final int FUDGE_FACTOR = (int) (10 * ARM_TICKS_PER_DEGREE);
         //public Motor arm;
         public DcMotor armMotor;
         public int target;
@@ -230,7 +231,7 @@ public class Mechanisms {
             public boolean run(@NonNull TelemetryPacket packet) {
                 // powers on motor, if it is not on
                 if (!initialized) {
-                    target = ARM_SCORE_SAMPLE_IN_LOW;
+                    target = ARM_SCORE_SAMPLE_IN_HIGH;
                     armMotor.setPower(0.8);
                     initialized = true;
                 }
@@ -275,6 +276,25 @@ public class Mechanisms {
         }
         public Action armCollect(){
             return new ArmCollect();
+        }
+
+        public class ArmCollectLow implements Action {
+            // checks if the lift motor has been powered on
+            private boolean initialized = false;
+            // actions are formatted via telemetry packets as below
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                // powers on motor, if it is not on
+                if (!initialized) {
+                    target = ARM_COLLECT_LOW;
+                    armMotor.setPower(0.8);
+                    initialized = true;
+                }
+                return RunToPos(packet);
+            }
+        }
+        public Action armCollectLow(){
+            return new ArmCollectLow();
         }
         public class ArmHangingHook implements Action {
             // checks if the lift motor has been powered on
@@ -355,15 +375,16 @@ public class Mechanisms {
         final int ARM_COLLAPSED_INTO_ROBOT  = 0;
         final int ARM_COLLECT               = -2000;
         final int ARM_CLEAR_BARRIER         = -1000;
-        final int ARM_SCORE_SPECIMEN        = 400;
-        final int ARM_SCORE_SAMPLE_IN_LOW   = 10;
+        final int ARM_SCORE_SPECIMEN        = -400;
+        final int ARM_SCORE_SAMPLE_IN_LOW   = -10;
         final int ARM_SCORE_SAMPLE_IN_HIGH   = -2500;
         final int ARM_ATTACH_HANGING_HOOK   = 0;
-        final int FUDGE_FACTOR = 15;
+        final int FUDGE_FACTOR = 300;
         //public Motor arm;
         public DcMotor armMotor;
         public int target;
         public int armPositionFudgeFactor;
+        public int slideReset = 0;
         //create lift from hardwaremap and initialize it
 
         public Slide(HardwareMap hardwareMap) {
@@ -387,7 +408,7 @@ public class Mechanisms {
 
         public boolean RunToPos(@NonNull TelemetryPacket packet) {
             //set the target position of the lift to 3000 ticks
-            armMotor.setTargetPosition(target+armPositionFudgeFactor);
+            armMotor.setTargetPosition(target+armPositionFudgeFactor-slideReset);
             //((DcMotorEx) armMotor).setVelocity(2100);
             int tolerance = ((DcMotorEx) armMotor).getTargetPositionTolerance()+2;
             armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -426,7 +447,7 @@ public class Mechanisms {
             public boolean run(@NonNull TelemetryPacket packet) {
                 // powers on motor, if it is not on
                 if (!initialized) {
-                    target = ARM_SCORE_SAMPLE_IN_LOW;
+                    target = ARM_SCORE_SAMPLE_IN_HIGH;
                     armMotor.setPower(0.8);
                     initialized = true;
                 }

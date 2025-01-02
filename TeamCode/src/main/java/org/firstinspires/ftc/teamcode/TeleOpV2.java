@@ -102,9 +102,9 @@ public class TeleOpV2 extends LinearOpMode {
             }
             runningActions = newActions;
 
-            if (lastArmButtonPressed!=4){
+            /*if (lastArmButtonPressed!=4){
                 armToggle = armToggleDefault;
-            }
+            }*/
 
             //read controller buttons
             driver1.readButtons();
@@ -112,11 +112,18 @@ public class TeleOpV2 extends LinearOpMode {
 
             double rightTrig2 = driver2.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER);
             double leftTrig2 = driver2.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER);
-            arm.armPositionFudgeFactor = (int) (arm.FUDGE_FACTOR * (rightTrig2-leftTrig2));
+            double rightJoy2 = driver2.getRightY();
+            double leftJoy2 = driver2.getLeftY();
+            arm.armPositionFudgeFactor = (int) (arm.FUDGE_FACTOR * (rightTrig2-leftTrig2+(leftJoy2*2)));
+            slide.armPositionFudgeFactor = (int) (slide.FUDGE_FACTOR*rightJoy2);
 
                 if (driver1.getButton(GamepadKeys.Button.START)){
                     lazyImu.get().resetYaw();
                 }
+
+            if (driver2.getButton(GamepadKeys.Button.START)){
+                slide.slideReset = slide.armMotor.getCurrentPosition();
+            }
 
                 if (driver2.getButton(GamepadKeys.Button.A)) {
                     lastArmButtonPressed = 1;
@@ -159,21 +166,23 @@ public class TeleOpV2 extends LinearOpMode {
                 }  else if (driver2.wasJustPressed(GamepadKeys.Button.DPAD_RIGHT)) {
                     lastArmButtonPressed = 4;
                     runningActions.add(new ParallelAction(
-                            wrist.foldOutWrist()
+                            wrist.foldOutWrist(),
+                            arm.armScoreHigh(),
+                            slide.armScoreHigh()
                     ));
-                    if (armToggle) {
-                        armToggle = false;
-                        runningActions.add(new ParallelAction(
-                                arm.armScoreHigh(),
-                                slide.armScoreHigh()
-                        ));
-                    } else {
-                        armToggle = true;
-                        runningActions.add(new ParallelAction(
-                                arm.armScoreLow(),
-                                slide.armScoreLow()
-                        ));
-                    }
+                } else if (driver2.getButton(GamepadKeys.Button.LEFT_STICK_BUTTON)){
+                    runningActions.add(new ParallelAction(
+                            wrist.foldOutWrist(),
+                            arm.armScoreLow(),
+                            slide.armScoreLow()
+                    ));
+                } else if (driver2.getButton(GamepadKeys.Button.RIGHT_STICK_BUTTON)){
+                    runningActions.add(new ParallelAction(
+                            arm.armCollectLow(),
+                            intake.intakeCollect(),
+                            wrist.foldOutWrist()
+                            ,slide.armCollapse()
+                    ));
                 }  else if (driver2.getButton(GamepadKeys.Button.DPAD_UP)) {
                     lastArmButtonPressed = 5;
                     runningActions.add(new ParallelAction(
@@ -218,6 +227,7 @@ public class TeleOpV2 extends LinearOpMode {
             telemetry.addData("arm target: ", arm.armMotor.getTargetPosition());
             telemetry.addData("slide encoder: ", slide.armMotor.getCurrentPosition());
             telemetry.addData("slide target: ", slide.armMotor.getTargetPosition());
+            telemetry.addData("slide reset: ", slide.slideReset);
             telemetry.update();
         }
     }
