@@ -117,7 +117,7 @@ public class LeftAutoV3 extends LinearOpMode {
                         , traj2.build()
                         , arm.armCollectFix()
                         , wrist.foldOutWrist()
-                        , intake.intakeCollect()
+                        , intake.intakeCollect() //ATTENTION!!! does removing this make robot not stop?? test that please whoever you are
                         , traj3.build()
                         , intake.intakeCollect()
                         , intake.intakeOff()
@@ -127,7 +127,7 @@ public class LeftAutoV3 extends LinearOpMode {
                         , traj5.build()
                         , arm.armCollectFix()
                         , wrist.foldOutWrist()
-                        , intake.intakeCollect()
+                        , intake.intakeCollect() //if above works then remove this too
                         , traj6.build()
                         , intake.intakeCollect()
                         , intake.intakeOff()
@@ -136,7 +136,7 @@ public class LeftAutoV3 extends LinearOpMode {
                         , traj8.build()
                         , arm.armCollectFix()
                         , wrist.foldOutWrist()
-                        , intake.intakeCollect()
+                        , intake.intakeCollect() //also this one
                         , traj9.build()
                         , intake.intakeCollect()
                         , intake.intakeOff()

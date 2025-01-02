@@ -58,7 +58,7 @@ public class Mechanisms {
         private CRServo intake;
         private boolean firstTime = false;
         private double timer = 0;
-        private int intakeTime =100000;
+        private int intakeTime =100000; //ATTENTION!! test to see if smaller number makes robot servo wheel take less time to think
         //create the claw object from hardware map
 
         public Intake(HardwareMap hardwareMap) {
