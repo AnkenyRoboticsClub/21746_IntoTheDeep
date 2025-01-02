@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
@@ -111,37 +112,57 @@ public class LeftAutoV3 extends LinearOpMode {
         //run actions sequentially, so it will run each action in order
         Actions.runBlocking(
                 new SequentialAction(
-                        traj1.build()
-                        , wrist.foldOutWrist()
-                        , intake.intakeDeposit()
-                        , traj2.build()
-                        , arm.armCollectFix()
-                        , wrist.foldOutWrist()
-                        , intake.intakeCollect() //ATTENTION!!! does removing this make robot not stop?? test that please whoever you are
-                        , traj3.build()
-                        , intake.intakeCollect()
-                        , intake.intakeOff()
-                        , arm.armScoreLowFix()
-                        , traj4.build()
-                        , intake.intakeDeposit()
-                        , traj5.build()
-                        , arm.armCollectFix()
-                        , wrist.foldOutWrist()
-                        , intake.intakeCollect() //if above works then remove this too
-                        , traj6.build()
-                        , intake.intakeCollect()
-                        , intake.intakeOff()
-                        , traj7.build()
-                        , intake.intakeDeposit()
-                        , traj8.build()
-                        , arm.armCollectFix()
-                        , wrist.foldOutWrist()
-                        , intake.intakeCollect() //also this one
-                        , traj9.build()
-                        , intake.intakeCollect()
-                        , intake.intakeOff()
-                        , traj10.build()
-                        , intake.intakeDeposit()
+                        new ParallelAction(
+                                traj1.build()
+                                , wrist.foldOutWrist()
+                                , intake.intakeDeposit()
+                        )
+                        , new ParallelAction(
+                                traj2.build()
+                                , arm.armCollectFix()
+                                , wrist.foldOutWrist()
+                                , intake.intakeCollect() //ATTENTION!!! does removing this make robot not stop?? test that please whoever you are
+                        )
+                        , new ParallelAction(
+                                traj3.build()
+                                , intake.intakeCollect()
+                                , intake.intakeOff()
+                                , arm.armScoreLowFix()
+                        )
+                        , new ParallelAction(
+                                traj4.build()
+                                , intake.intakeDeposit()
+                        )
+                        , new ParallelAction(
+                                traj5.build()
+                                , arm.armCollectFix()
+                                , wrist.foldOutWrist()
+                                , intake.intakeCollect() //if above works then remove this too
+                        )
+                        , new ParallelAction(
+                                traj6.build()
+                                , intake.intakeCollect()
+                                , intake.intakeOff()
+                        )
+                        , new ParallelAction(
+                                traj7.build()
+                                , intake.intakeDeposit()
+                        )
+                        , new ParallelAction(
+                                traj8.build()
+                                , arm.armCollectFix()
+                                , wrist.foldOutWrist()
+                                , intake.intakeCollect() //also this one
+                        )
+                        , new ParallelAction(
+                                traj9.build()
+                                , intake.intakeCollect()
+                                , intake.intakeOff()
+                        )
+                        , new ParallelAction(
+                                traj10.build()
+                                , intake.intakeDeposit()
+                        )
                 )
         );
     }
