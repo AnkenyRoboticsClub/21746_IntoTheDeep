@@ -39,7 +39,7 @@ public class Mechanisms {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
                 //when openclaw is run, set the claw to the open position
-                RobotLog.ii("DbgLog", "Run: Wrist Pos: 0.36");
+                RobotLog.ii("DbgLog", "Run: Wrist Pos: 0.38");
                 wrist.setPosition(0.38);
                 return false;
             }
