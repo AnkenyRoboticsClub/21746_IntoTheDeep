@@ -45,7 +45,7 @@ public class LeftAutoV4 extends LinearOpMode {
         Mechanisms.Slide slide = new Mechanisms.Slide(hardwareMap);
 
         TrajectoryActionBuilder traj1 = drive.actionBuilder(initialPose)
-                .strafeToLinearHeading(new Vector2d(-52, -52), Math.toRadians(225))
+                .strafeToLinearHeading(new Vector2d(-50, -50), Math.toRadians(225))
                 .afterTime(0, arm.armScoreHigh()) //changing arm class
                 //.afterTime(0, slide.armScoreHigh())
                 .afterTime(0, wrist.foldOutWrist())
@@ -59,7 +59,7 @@ public class LeftAutoV4 extends LinearOpMode {
                 .strafeToLinearHeading(new Vector2d(-32, -32), Math.toRadians(160))
                 ;
         TrajectoryActionBuilder traj4 = traj3.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(-52, -52), Math.toRadians(225))
+                .strafeToLinearHeading(new Vector2d(-50, -50), Math.toRadians(225))
                 ;
         TrajectoryActionBuilder traj5 = traj4.endTrajectory().fresh()
                 .strafeToLinearHeading(new Vector2d(-36, -32), Math.toRadians(90))
@@ -82,9 +82,9 @@ public class LeftAutoV4 extends LinearOpMode {
                         , intake.intakeDeposit()
                         , slide.armCollapse()
                         , traj2.build()
-                        , arm.armCollect() //changing arm class
+                        , arm.armCollectLow() //changing arm class
                         , wrist.foldOutWrist()
-                        ,slide.armCollect()
+                        ,slide.armCollapse()
                         , intake.intakeCollect()
                         , traj3.build()
                         , intake.intakeCollect()
