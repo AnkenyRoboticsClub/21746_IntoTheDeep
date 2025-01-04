@@ -66,7 +66,7 @@ public class Mechanisms {
         private CRServo intake;
         private boolean firstTime = false;
         private double timer = 0;
-        private final int intakeTime =100000;
+        private final int intakeTime =90000;
         //how many times it runs so that it will let it run for a bit before moving to the next action in auto
 
         public Intake(HardwareMap hardwareMap) {
@@ -125,7 +125,7 @@ public class Mechanisms {
                 } else {
                     timer++;
                 }
-                if (timer>intakeTime) {
+                if (/*timer>intakeTime*/true) {
                     firstTime = false;
                     return false;
 

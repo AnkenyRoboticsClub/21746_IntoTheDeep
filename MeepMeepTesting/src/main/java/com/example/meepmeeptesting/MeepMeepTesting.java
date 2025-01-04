@@ -48,10 +48,12 @@ public class MeepMeepTesting {
                 .build();
 
         mySecondBot.runAction(mySecondBot.getDrive().actionBuilder(new Pose2d(-33, -63, Math.toRadians(-90)))
-                .strafeToLinearHeading(new Vector2d(-52, -52), Math.toRadians(225))
-                .strafeToLinearHeading(new Vector2d(-25, -36), Math.toRadians(160))
-                .strafeToLinearHeading(new Vector2d(-32, -32), Math.toRadians(160))
-                .strafeToLinearHeading(new Vector2d(-52, -52), Math.toRadians(225))
+                .strafeToLinearHeading(new Vector2d(-49.5, -49.5), Math.toRadians(225))
+                .strafeToLinearHeading(new Vector2d(-47, -47), Math.toRadians(225))
+                .strafeToLinearHeading(new Vector2d(-33, -32), Math.toRadians(160))
+                .strafeToLinearHeading(new Vector2d(-40, -30), Math.toRadians(160))
+                .strafeToLinearHeading(new Vector2d(-49.5, -49.5), Math.toRadians(225))
+                .strafeToLinearHeading(new Vector2d(-47, -47), Math.toRadians(225))
                 .strafeToLinearHeading(new Vector2d(-36, -32), Math.toRadians(90))
                 .build());
 

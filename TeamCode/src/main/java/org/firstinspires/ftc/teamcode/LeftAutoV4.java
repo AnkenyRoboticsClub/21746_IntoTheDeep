@@ -36,32 +36,37 @@ public class LeftAutoV4 extends LinearOpMode {
 
         //initialize our roadrunner drivetrain
         MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
-        //initialize claw and lift from our mechanisms file
-        //Mechanisms.Claw claw = new Mechanisms.Claw(hardwareMap);
-        //Mechanisms.Lift lift = new Mechanisms.Lift(hardwareMap);
+        //init stuff from mechanism class
         Mechanisms.Arm arm = new Mechanisms.Arm(hardwareMap);
         Mechanisms.Intake intake = new Mechanisms.Intake(hardwareMap);
         Mechanisms.Wrist wrist = new Mechanisms.Wrist(hardwareMap);
         Mechanisms.Slide slide = new Mechanisms.Slide(hardwareMap);
 
         TrajectoryActionBuilder traj1 = drive.actionBuilder(initialPose)
-                .strafeToLinearHeading(new Vector2d(-50, -50), Math.toRadians(225))
-                .afterTime(0, arm.armScoreHigh()) //changing arm class
-                //.afterTime(0, slide.armScoreHigh())
+                .strafeToLinearHeading(new Vector2d(-49.5, -49.5), Math.toRadians(225))
+                .afterTime(0, arm.armScoreHigh())
                 .afterTime(0, wrist.foldOutWrist())
                 ;
 
         TrajectoryActionBuilder traj2 = traj1.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(-25, -36), Math.toRadians(160))
+                .strafeToLinearHeading(new Vector2d(-47, -47), Math.toRadians(225))
+                .afterTime(0, slide.armCollapse())
+                .strafeToLinearHeading(new Vector2d(-40, -30), Math.toRadians(160))
+                .afterTime(0, arm.armClear())
                 ;
 
         TrajectoryActionBuilder traj3 = traj2.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(-32, -32), Math.toRadians(160))
+                .strafeToLinearHeading(new Vector2d(-39, -31), Math.toRadians(160))
+                .afterTime(0, intake.intakeCollect())
                 ;
         TrajectoryActionBuilder traj4 = traj3.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(-50, -50), Math.toRadians(225))
+                .strafeToLinearHeading(new Vector2d(-49.5, -49.5), Math.toRadians(225))
+                .afterTime(0, arm.armScoreHigh())
                 ;
+
         TrajectoryActionBuilder traj5 = traj4.endTrajectory().fresh()
+                .strafeToLinearHeading(new Vector2d(-47, -47), Math.toRadians(225))
+                .afterTime(0, slide.armCollapse())
                 .strafeToLinearHeading(new Vector2d(-36, -32), Math.toRadians(90))
                 .afterTime(0, wrist.foldInWrist())
                 .afterTime(0, arm.armCollapse())
@@ -78,22 +83,15 @@ public class LeftAutoV4 extends LinearOpMode {
                 new SequentialAction(
                         traj1.build()
                         , slide.armScoreHigh()
-                        , wrist.foldOutWrist()
                         , intake.intakeDeposit()
-                        , slide.armCollapse()
                         , traj2.build()
-                        , arm.armCollectLow() //changing arm class
-                        , wrist.foldOutWrist()
-                        ,slide.armCollapse()
-                        , intake.intakeCollect()
+                        , arm.armCollectLow()
                         , traj3.build()
                         , intake.intakeCollect()
                         , intake.intakeOff()
-                        , arm.armScoreHigh() //changing arm class
                         , traj4.build()
                         , slide.armScoreHigh()
                         , intake.intakeDeposit()
-                        , slide.armCollapse()
                         , traj5.build()
                 )
         );
