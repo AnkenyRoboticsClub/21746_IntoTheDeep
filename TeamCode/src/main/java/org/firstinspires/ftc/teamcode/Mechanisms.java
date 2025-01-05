@@ -81,25 +81,23 @@ public class Mechanisms {
             public boolean run(@NonNull TelemetryPacket packet) {
                 if (!initialized){
                     intake.setPower(1);
-                    firstTime = false;
                     initialized = true;
-                }
-                RobotLog.ii("DbgLog", "Run: Intake Collect");
-                //return false;
-                if (!firstTime) {
-                    //timer
-                    firstTime = true;
                     timer = 0;
+                    RobotLog.ii("DbgLog", "Run: Intake Collect Timer: "+timer);
+                }
+                //return false;
+                if (!initialized) {
+                    //timer
                 } else {
                     timer++;
                 }
                 if (timer>intakeTime) {
-                    firstTime = false;
                     return false;
 
                 } else {
                     return true;
                 }
+
             }
         }
         //allow the function to be able to called from other files
@@ -108,30 +106,11 @@ public class Mechanisms {
         }
         //create an intakecollect function by implementing action class
         public class IntakeOff implements Action {
-            private boolean initialized = false;
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
+                intake.setPower(0);
                 RobotLog.ii("DbgLog", "Run: Intake Off");
-                if (!initialized){
-                    intake.setPower(0);
-                    firstTime = false;
-                    initialized = true;
-                }
-                //return false;
-                if (!firstTime) {
-                    //timer
-                    firstTime = true;
-                    timer = 0;
-                } else {
-                    timer++;
-                }
-                if (/*timer>intakeTime*/true) {
-                    firstTime = false;
-                    return false;
-
-                } else {
-                    return true;
-                }
+                return false;
             }
         }
         //allow the function to be able to be called from other files
@@ -143,22 +122,20 @@ public class Mechanisms {
             private boolean initialized = false;
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                RobotLog.ii("DbgLog", "Run: Intake Deposit");
+
                 if (!initialized){
-                    intake.setPower(-0.5);
-                    firstTime = false;
+                    intake.setPower(1);
                     initialized = true;
+                    timer = 0;
+                    RobotLog.ii("DbgLog", "Run: Intake Deposit Timer: "+timer);
                 }
                 //return false;
-                if (!firstTime) {
+                if (!initialized) {
                     //timer
-                    firstTime = true;
-                    timer = 0;
                 } else {
                     timer++;
                 }
                 if (timer>intakeTime) {
-                    firstTime = false;
                     return false;
 
                 } else {
@@ -217,7 +194,7 @@ public class Mechanisms {
             //set the target position of the lift to 3000 ticks
             armMotor.setTargetPosition(target+armPositionFudgeFactor);
             //((DcMotorEx) armMotor).setVelocity(2100);
-            int tolerance = ((DcMotorEx) armMotor).getTargetPositionTolerance()+2;
+            int tolerance = ((DcMotorEx) armMotor).getTargetPositionTolerance()+4;
             armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             //return false;
             RobotLog.ii("DbgLog", "Arm RunToPos: Target: "+armMotor.getTargetPosition()+" Position: "+armMotor.getCurrentPosition());
