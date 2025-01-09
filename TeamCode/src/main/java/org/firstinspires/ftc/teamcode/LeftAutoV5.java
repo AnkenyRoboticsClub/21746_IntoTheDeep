@@ -13,8 +13,8 @@ import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive;
 @Config
 //Need the autnomous tag in order for it show up on driver station as an autonomous program
 // You can also set the name of the autonomous and the group
-@Autonomous(name = "LeftV4", group = "Autonomous")
-public class LeftAutoV4 extends LinearOpMode {
+@Autonomous(name = "LeftV5", group = "Autonomous")
+public class LeftAutoV5 extends LinearOpMode {
 
     @Override
     public void runOpMode() {
@@ -51,12 +51,16 @@ public class LeftAutoV4 extends LinearOpMode {
         TrajectoryActionBuilder traj2 = traj1.endTrajectory().fresh()
                 .strafeToLinearHeading(new Vector2d(-47, -47), Math.toRadians(225))
                 .afterTime(0, slide.armCollapse())
-                .strafeToLinearHeading(new Vector2d(-40, -30), Math.toRadians(160))
+                .strafeToLinearHeading(new Vector2d(-33, -40), Math.toRadians(160))
                 .afterTime(0, arm.armClear())
                 ;
 
-        TrajectoryActionBuilder traj3 = traj2.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(-39, -31), Math.toRadians(160))
+        TrajectoryActionBuilder trajnew1 = traj2.endTrajectory().fresh()
+                .strafeToLinearHeading(new Vector2d(-36, -32), Math.toRadians(160))
+                ;
+
+        TrajectoryActionBuilder traj3 = trajnew1.endTrajectory().fresh()
+                .strafeToLinearHeading(new Vector2d(-40, -30), Math.toRadians(160))
                 .afterTime(0, intake.intakeCollect())
                 ;
         TrajectoryActionBuilder traj4 = traj3.endTrajectory().fresh()
@@ -69,7 +73,7 @@ public class LeftAutoV4 extends LinearOpMode {
                 .afterTime(0, slide.armCollapse())
                 .strafeToLinearHeading(new Vector2d(-36, -32), Math.toRadians(90))
                 .afterTime(0, wrist.foldInWrist())
-                .afterTime(0, arm.armCollapse())
+                .afterTime(0.1, arm.armCollapse())
                 ;
 
         //wait for autonomous to start
@@ -85,13 +89,15 @@ public class LeftAutoV4 extends LinearOpMode {
                         , slide.armScoreHigh()
                         , intake.intakeDeposit()
                         , traj2.build()
+                        , trajnew1.build()
                         , arm.armCollectLow()
                         , traj3.build()
-                        , intake.intakeCollect()
                         , intake.intakeOff()
+                        , arm.armClear()
                         , traj4.build()
                         , slide.armScoreHigh()
                         , intake.intakeDeposit()
+                        , intake.intakeOff()
                         , traj5.build()
                 )
         );

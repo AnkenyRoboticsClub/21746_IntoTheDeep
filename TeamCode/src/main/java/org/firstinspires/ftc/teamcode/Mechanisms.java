@@ -83,8 +83,8 @@ public class Mechanisms {
                     intake.setPower(1);
                     firstTime = false;
                     initialized = true;
+                    RobotLog.ii("DbgLog", "Init: Intake Collect");
                 }
-                RobotLog.ii("DbgLog", "Run: Intake Collect");
                 //return false;
                 if (!firstTime) {
                     //timer
@@ -111,11 +111,11 @@ public class Mechanisms {
             private boolean initialized = false;
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                RobotLog.ii("DbgLog", "Run: Intake Off");
                 if (!initialized){
                     intake.setPower(0);
                     firstTime = false;
                     initialized = true;
+                    RobotLog.ii("DbgLog", "Init: Intake Off");
                 }
                 //return false;
                 if (!firstTime) {
@@ -143,11 +143,11 @@ public class Mechanisms {
             private boolean initialized = false;
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                RobotLog.ii("DbgLog", "Run: Intake Deposit");
                 if (!initialized){
                     intake.setPower(-0.5);
                     firstTime = false;
                     initialized = true;
+                    RobotLog.ii("DbgLog", "Init: Intake Deposit");
                 }
                 //return false;
                 if (!firstTime) {
@@ -220,12 +220,12 @@ public class Mechanisms {
             int tolerance = ((DcMotorEx) armMotor).getTargetPositionTolerance()+2;
             armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             //return false;
-            RobotLog.ii("DbgLog", "Arm RunToPos: Target: "+armMotor.getTargetPosition()+" Position: "+armMotor.getCurrentPosition());
             if ((Math.abs(armMotor.getCurrentPosition()-armMotor.getTargetPosition())>tolerance)) {
                 // true causes the action to rerun
                 return true;
             } else {
                 //false stops action rerun and stops the arm
+                RobotLog.ii("DbgLog", "Arm Finished: Target: "+armMotor.getTargetPosition()+" Position: "+armMotor.getCurrentPosition());
                 return false;
             }
         }
@@ -437,12 +437,12 @@ public class Mechanisms {
             int tolerance = ((DcMotorEx) armMotor).getTargetPositionTolerance()+2;
             armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             //return false;
-            RobotLog.ii("DbgLog", "Slide RunToPos: Target: "+armMotor.getTargetPosition()+" Position: "+armMotor.getCurrentPosition());
             if ((Math.abs(armMotor.getCurrentPosition()-armMotor.getTargetPosition())>tolerance)) {
                 // true causes the action to rerun
                 return true;
             } else {
                 //false stops action rerun and stops the arm
+                RobotLog.ii("DbgLog", "Slide Finished: Target: "+armMotor.getTargetPosition()+" Position: "+armMotor.getCurrentPosition());
                 return false;
             }
         }
