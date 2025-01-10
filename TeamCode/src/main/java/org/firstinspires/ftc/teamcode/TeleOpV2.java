@@ -117,9 +117,9 @@ public class TeleOpV2 extends LinearOpMode {
             arm.armPositionFudgeFactor = (int) (arm.FUDGE_FACTOR * (rightTrig2-leftTrig2+(leftJoy2*2)));
             slide.armPositionFudgeFactor = (int) (slide.FUDGE_FACTOR*rightJoy2);
 
-                if (driver1.getButton(GamepadKeys.Button.START)){
-                    lazyImu.get().resetYaw();
-                }
+            if (driver1.getButton(GamepadKeys.Button.START)){
+                lazyImu.get().resetYaw();
+            }
 
             if (driver2.getButton(GamepadKeys.Button.START)){
                 slide.slideReset = slide.armMotor.getCurrentPosition();
@@ -199,11 +199,16 @@ public class TeleOpV2 extends LinearOpMode {
                             ,slide.armScoreSpecimen()
                     ));
                 }
-
-            runningActions.add(new ParallelAction(
-                    arm.armRun()
-                    ,slide.armRun()
-            ));
+            if (Math.abs(rightTrig2-leftTrig2+(leftJoy2*2))>0.2){
+                runningActions.add(new ParallelAction(
+                        arm.armRun()
+                ));
+            }
+            if (Math.abs(rightJoy2)>0.4){
+                runningActions.add(new ParallelAction(
+                        slide.armRun()
+                ));
+            }
 
             /*call our mecanum drive function from ftclib using field centric control,
             if you want robotcentric, change "Field" to "Robot" and remove the imuValue variable,

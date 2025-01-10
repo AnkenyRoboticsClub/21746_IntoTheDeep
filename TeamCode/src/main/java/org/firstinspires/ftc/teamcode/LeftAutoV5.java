@@ -56,7 +56,8 @@ public class LeftAutoV5 extends LinearOpMode {
                 ;
 
         TrajectoryActionBuilder trajnew1 = traj2.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(-36, -32), Math.toRadians(160))
+                .strafeToLinearHeading(new Vector2d(-34, -32), Math.toRadians(160))
+                .afterTime(0, intake.intakeCollect())
                 ;
 
         TrajectoryActionBuilder traj3 = trajnew1.endTrajectory().fresh()
@@ -86,6 +87,7 @@ public class LeftAutoV5 extends LinearOpMode {
         Actions.runBlocking(
                 new SequentialAction(
                         traj1.build()
+                        , wrist.foldOutWrist()
                         , slide.armScoreHigh()
                         , intake.intakeDeposit()
                         , traj2.build()

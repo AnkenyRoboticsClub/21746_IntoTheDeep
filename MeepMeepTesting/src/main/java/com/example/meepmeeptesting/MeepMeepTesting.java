@@ -51,7 +51,7 @@ public class MeepMeepTesting {
                 .strafeToLinearHeading(new Vector2d(-49.5, -49.5), Math.toRadians(225))
                 .strafeToLinearHeading(new Vector2d(-47, -47), Math.toRadians(225))
                 .strafeToLinearHeading(new Vector2d(-33, -40), Math.toRadians(160))
-                .strafeToLinearHeading(new Vector2d(-36, -32), Math.toRadians(160))
+                .strafeToLinearHeading(new Vector2d(-34, -32), Math.toRadians(160))
                 .strafeToLinearHeading(new Vector2d(-40, -30), Math.toRadians(160))
                 .strafeToLinearHeading(new Vector2d(-49.5, -49.5), Math.toRadians(225))
                 .strafeToLinearHeading(new Vector2d(-47, -47), Math.toRadians(225))

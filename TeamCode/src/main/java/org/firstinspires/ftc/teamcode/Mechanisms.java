@@ -66,7 +66,8 @@ public class Mechanisms {
         private CRServo intake;
         private boolean firstTime = false;
         private double timer = 0;
-        private final int intakeTime =90000;
+        private final int intakeTime =40000;
+        private final int depositTime =40000;
         //how many times it runs so that it will let it run for a bit before moving to the next action in auto
 
         public Intake(HardwareMap hardwareMap) {
@@ -84,6 +85,7 @@ public class Mechanisms {
                     firstTime = false;
                     initialized = true;
                     RobotLog.ii("DbgLog", "Init: Intake Collect");
+                    RobotLog.ii("DbgLog", "Intake Timer: "+timer);
                 }
                 //return false;
                 if (!firstTime) {
@@ -92,9 +94,13 @@ public class Mechanisms {
                     timer = 0;
                 } else {
                     timer++;
+
                 }
                 if (timer>intakeTime) {
+                    timer = 0;
                     firstTime = false;
+                    RobotLog.ii("DbgLog", "End: Intake Collect");
+                    RobotLog.ii("DbgLog", "Intake Timer: "+timer);
                     return false;
 
                 } else {
@@ -116,6 +122,7 @@ public class Mechanisms {
                     firstTime = false;
                     initialized = true;
                     RobotLog.ii("DbgLog", "Init: Intake Off");
+                    RobotLog.ii("DbgLog", "Intake Timer: "+timer);
                 }
                 //return false;
                 if (!firstTime) {
@@ -124,9 +131,13 @@ public class Mechanisms {
                     timer = 0;
                 } else {
                     timer++;
+                    //RobotLog.ii("DbgLog", "Intake Timer: "+timer);
                 }
                 if (/*timer>intakeTime*/true) {
+                    timer = 0;
                     firstTime = false;
+                    RobotLog.ii("DbgLog", "End: Intake Off");
+                    RobotLog.ii("DbgLog", "Intake Timer: "+timer);
                     return false;
 
                 } else {
@@ -148,6 +159,7 @@ public class Mechanisms {
                     firstTime = false;
                     initialized = true;
                     RobotLog.ii("DbgLog", "Init: Intake Deposit");
+                    RobotLog.ii("DbgLog", "Intake Timer: "+timer);
                 }
                 //return false;
                 if (!firstTime) {
@@ -156,9 +168,13 @@ public class Mechanisms {
                     timer = 0;
                 } else {
                     timer++;
+                    //RobotLog.ii("DbgLog", "Intake Timer: "+timer);
                 }
-                if (timer>intakeTime) {
+                if (timer>depositTime) {
+                    timer = 0;
                     firstTime = false;
+                    RobotLog.ii("DbgLog", "End: Intake Deposit");
+                    RobotLog.ii("DbgLog", "Intake Timer: "+timer);
                     return false;
 
                 } else {
@@ -181,7 +197,7 @@ public class Mechanisms {
         //values copied from TeleOpV3
         final int ARM_COLLAPSED_INTO_ROBOT  = 10;
         final int ARM_COLLECT               = (int) (17 * ARM_TICKS_PER_DEGREE);
-        final int ARM_COLLECT_LOW               = (int) (4 * ARM_TICKS_PER_DEGREE);
+        final int ARM_COLLECT_LOW               = (int) (10.5 * ARM_TICKS_PER_DEGREE);
         final int ARM_CLEAR_BARRIER         = (int) (25 * ARM_TICKS_PER_DEGREE);
         final int ARM_SCORE_SPECIMEN        = (int) (64 * ARM_TICKS_PER_DEGREE);
         final int ARM_SCORE_SAMPLE_IN_LOW   = (int) (83 * ARM_TICKS_PER_DEGREE);
@@ -409,6 +425,8 @@ public class Mechanisms {
         public int target;
         public int armPositionFudgeFactor;
         public int slideReset = 0;
+        private int stuckCounter = 0;
+        private int lastPos = 0;
         //create lift from hardwaremap and initialize it
 
         public Slide(HardwareMap hardwareMap) {
@@ -432,17 +450,30 @@ public class Mechanisms {
 
         public boolean RunToPos(@NonNull TelemetryPacket packet) {
             //set the target position of the lift to 3000 ticks
-            armMotor.setTargetPosition(target+armPositionFudgeFactor-slideReset);
+            armMotor.setTargetPosition(target+armPositionFudgeFactor+slideReset);
             //((DcMotorEx) armMotor).setVelocity(2100);
             int tolerance = ((DcMotorEx) armMotor).getTargetPositionTolerance()+2;
             armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             //return false;
-            if ((Math.abs(armMotor.getCurrentPosition()-armMotor.getTargetPosition())>tolerance)) {
+            if(lastPos==armMotor.getCurrentPosition()){
+                stuckCounter++;
+            } else {
+                stuckCounter = 0;
+            }
+            if ((Math.abs(armMotor.getCurrentPosition()-armMotor.getTargetPosition())>tolerance)&&stuckCounter<100) {
                 // true causes the action to rerun
+                RobotLog.ii("DbgLog", "Slide Running: Target: "+armMotor.getTargetPosition()+" Position: "+armMotor.getCurrentPosition()+" Stuck Counter: "+stuckCounter);
+                lastPos = armMotor.getCurrentPosition();
                 return true;
             } else {
                 //false stops action rerun and stops the arm
-                RobotLog.ii("DbgLog", "Slide Finished: Target: "+armMotor.getTargetPosition()+" Position: "+armMotor.getCurrentPosition());
+                if(stuckCounter>=100){
+                    stuckCounter = 0;
+                    armMotor.setTargetPosition(lastPos);
+                    RobotLog.ii("DbgLog", "Slide Canceled: Target: "+armMotor.getTargetPosition()+" Position: "+armMotor.getCurrentPosition()+" Stuck Counter: "+stuckCounter);
+                } else {
+                    RobotLog.ii("DbgLog", "Slide Finished: Target: " + armMotor.getTargetPosition() + " Position: " + armMotor.getCurrentPosition());
+                }
                 return false;
             }
         }
