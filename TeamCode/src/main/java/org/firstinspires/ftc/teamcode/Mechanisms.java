@@ -66,8 +66,8 @@ public class Mechanisms {
         private CRServo intake;
         private boolean firstTime = false;
         private double timer = 0;
-        private final int intakeTime =40000;
-        private final int depositTime =40000;
+        private final int intakeTime =60000;
+        private final int depositTime =60000;
         //how many times it runs so that it will let it run for a bit before moving to the next action in auto
 
         public Intake(HardwareMap hardwareMap) {
@@ -97,10 +97,10 @@ public class Mechanisms {
 
                 }
                 if (timer>intakeTime) {
-                    timer = 0;
                     firstTime = false;
                     RobotLog.ii("DbgLog", "End: Intake Collect");
                     RobotLog.ii("DbgLog", "Intake Timer: "+timer);
+                    timer = 0;
                     return false;
 
                 } else {
@@ -134,10 +134,11 @@ public class Mechanisms {
                     //RobotLog.ii("DbgLog", "Intake Timer: "+timer);
                 }
                 if (/*timer>intakeTime*/true) {
-                    timer = 0;
+
                     firstTime = false;
                     RobotLog.ii("DbgLog", "End: Intake Off");
                     RobotLog.ii("DbgLog", "Intake Timer: "+timer);
+                    timer = 0;
                     return false;
 
                 } else {
@@ -171,10 +172,11 @@ public class Mechanisms {
                     //RobotLog.ii("DbgLog", "Intake Timer: "+timer);
                 }
                 if (timer>depositTime) {
-                    timer = 0;
+
                     firstTime = false;
                     RobotLog.ii("DbgLog", "End: Intake Deposit");
                     RobotLog.ii("DbgLog", "Intake Timer: "+timer);
+                    timer = 0;
                     return false;
 
                 } else {
@@ -197,7 +199,7 @@ public class Mechanisms {
         //values copied from TeleOpV3
         final int ARM_COLLAPSED_INTO_ROBOT  = 10;
         final int ARM_COLLECT               = (int) (17 * ARM_TICKS_PER_DEGREE);
-        final int ARM_COLLECT_LOW               = (int) (10.5 * ARM_TICKS_PER_DEGREE);
+        final int ARM_COLLECT_LOW               = (int) (11 * ARM_TICKS_PER_DEGREE);
         final int ARM_CLEAR_BARRIER         = (int) (25 * ARM_TICKS_PER_DEGREE);
         final int ARM_SCORE_SPECIMEN        = (int) (64 * ARM_TICKS_PER_DEGREE);
         final int ARM_SCORE_SAMPLE_IN_LOW   = (int) (83 * ARM_TICKS_PER_DEGREE);
