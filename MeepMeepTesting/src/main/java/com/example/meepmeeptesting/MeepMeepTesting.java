@@ -55,7 +55,12 @@ public class MeepMeepTesting {
                 .strafeToLinearHeading(new Vector2d(-40, -30), Math.toRadians(160))
                 .strafeToLinearHeading(new Vector2d(-49.5, -49.5), Math.toRadians(225))
                 .strafeToLinearHeading(new Vector2d(-47, -47), Math.toRadians(225))
-                .strafeToLinearHeading(new Vector2d(-36, -32), Math.toRadians(90))
+                //.strafeToLinearHeading(new Vector2d(-36, -32), Math.toRadians(90))
+                //.splineToLinearHeading(new Pose2d(-40, -20, Math.toRadians(180)),Math.toRadians(90))
+                //.strafeToLinearHeading(new Vector2d(-40, -40), Math.toRadians(180))
+                .splineToLinearHeading(new Pose2d(-40, -20, Math.toRadians(225)),Math.toRadians(90))
+                .splineToLinearHeading(new Pose2d(-35, -11, Math.toRadians(225)),Math.toRadians(0))
+                .strafeToLinearHeading(new Vector2d(-25, -11), Math.toRadians(180))
                 .build());
 
         meepMeep.setBackground(MeepMeep.Background.FIELD_INTO_THE_DEEP_JUICE_DARK)

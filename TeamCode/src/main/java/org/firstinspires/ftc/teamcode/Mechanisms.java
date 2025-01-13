@@ -81,6 +81,15 @@ public class Mechanisms {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
                 if (!initialized){
+                    timer = 0;
+                    intake.setPower(1);
+                    initialized = true;
+                    RobotLog.ii("DbgLog", "Init: Intake Collect");
+                    RobotLog.ii("DbgLog", "Intake Timer: "+timer);
+                } else {
+                    timer++;
+                }
+                /*if (!initialized){
                     intake.setPower(1);
                     firstTime = false;
                     initialized = true;
@@ -95,12 +104,12 @@ public class Mechanisms {
                 } else {
                     timer++;
 
-                }
+                }*/
                 if (timer>intakeTime) {
-                    timer = 0;
-                    firstTime = false;
+                    //firstTime = false;
                     RobotLog.ii("DbgLog", "End: Intake Collect");
                     RobotLog.ii("DbgLog", "Intake Timer: "+timer);
+                    timer = 0;
                     return false;
 
                 } else {
@@ -118,31 +127,17 @@ public class Mechanisms {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
                 if (!initialized){
+                    timer = 0;
                     intake.setPower(0);
-                    firstTime = false;
                     initialized = true;
                     RobotLog.ii("DbgLog", "Init: Intake Off");
                     RobotLog.ii("DbgLog", "Intake Timer: "+timer);
                 }
-                //return false;
-                if (!firstTime) {
-                    //timer
-                    firstTime = true;
-                    timer = 0;
-                } else {
-                    timer++;
-                    //RobotLog.ii("DbgLog", "Intake Timer: "+timer);
-                }
-                if (/*timer>intakeTime*/true) {
-                    timer = 0;
-                    firstTime = false;
-                    RobotLog.ii("DbgLog", "End: Intake Off");
-                    RobotLog.ii("DbgLog", "Intake Timer: "+timer);
-                    return false;
+                timer = 0;
+                RobotLog.ii("DbgLog", "End: Intake Off");
+                RobotLog.ii("DbgLog", "Intake Timer: "+timer);
+                return false;
 
-                } else {
-                    return true;
-                }
             }
         }
         //allow the function to be able to be called from other files
@@ -155,6 +150,15 @@ public class Mechanisms {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
                 if (!initialized){
+                    timer = 0;
+                    intake.setPower(1);
+                    initialized = true;
+                    RobotLog.ii("DbgLog", "Init: Intake Deposit");
+                    RobotLog.ii("DbgLog", "Intake Timer: "+timer);
+                } else {
+                    timer++;
+                }
+                /*if (!initialized){
                     intake.setPower(-0.5);
                     firstTime = false;
                     initialized = true;
@@ -169,12 +173,12 @@ public class Mechanisms {
                 } else {
                     timer++;
                     //RobotLog.ii("DbgLog", "Intake Timer: "+timer);
-                }
+                }*/
                 if (timer>depositTime) {
-                    timer = 0;
-                    firstTime = false;
+                    //firstTime = false;
                     RobotLog.ii("DbgLog", "End: Intake Deposit");
                     RobotLog.ii("DbgLog", "Intake Timer: "+timer);
+                    timer = 0;
                     return false;
 
                 } else {
@@ -197,12 +201,13 @@ public class Mechanisms {
         //values copied from TeleOpV3
         final int ARM_COLLAPSED_INTO_ROBOT  = 10;
         final int ARM_COLLECT               = (int) (17 * ARM_TICKS_PER_DEGREE);
-        final int ARM_COLLECT_LOW               = (int) (10.5 * ARM_TICKS_PER_DEGREE);
+        final int ARM_COLLECT_LOW           = (int) (10.5 * ARM_TICKS_PER_DEGREE);
         final int ARM_CLEAR_BARRIER         = (int) (25 * ARM_TICKS_PER_DEGREE);
         final int ARM_SCORE_SPECIMEN        = (int) (64 * ARM_TICKS_PER_DEGREE);
         final int ARM_SCORE_SAMPLE_IN_LOW   = (int) (83 * ARM_TICKS_PER_DEGREE);
         final int ARM_SCORE_SAMPLE_IN_HIGH   = (int) (87 * ARM_TICKS_PER_DEGREE);
         final int ARM_ATTACH_HANGING_HOOK   = (int) (110 * ARM_TICKS_PER_DEGREE);
+        final int ARM_HANG   = (int) (130 * ARM_TICKS_PER_DEGREE);
         final int ARM_WINCH_ROBOT           = (int) (10  * ARM_TICKS_PER_DEGREE);
         final int FUDGE_FACTOR = (int) (10 * ARM_TICKS_PER_DEGREE);
         //public Motor arm;
@@ -226,22 +231,26 @@ public class Mechanisms {
             armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             armMotor.setTargetPosition(0);
             armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            //armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         }
         public boolean RunToPos(@NonNull TelemetryPacket packet) {
-            //set the target position of the lift to 3000 ticks
+            ((DcMotorEx) armMotor).setTargetPositionTolerance(20);
             armMotor.setTargetPosition(target+armPositionFudgeFactor);
-            //((DcMotorEx) armMotor).setVelocity(2100);
-            int tolerance = ((DcMotorEx) armMotor).getTargetPositionTolerance()+2;
+            int tolerance = ((DcMotorEx) armMotor).getTargetPositionTolerance()+1;
             armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            //return false;
-            if ((Math.abs(armMotor.getCurrentPosition()-armMotor.getTargetPosition())>tolerance)) {
+            int armDistance = Math.abs(armMotor.getCurrentPosition()-armMotor.getTargetPosition());
+            if (armDistance < 500) {
+                ((DcMotorEx) armMotor).setVelocity(500);
+            } else {
+                ((DcMotorEx) armMotor).setVelocity(2100);
+            }
+            if (armDistance>tolerance) {
                 // true causes the action to rerun
                 return true;
             } else {
                 //false stops action rerun and stops the arm
-                RobotLog.ii("DbgLog", "Arm Finished: Target: "+armMotor.getTargetPosition()+" Position: "+armMotor.getCurrentPosition());
+                RobotLog.ii("DbgLog", "Arm Finished: Target: "+armMotor.getTargetPosition()+" Position: "+armMotor.getCurrentPosition()+" Velocity: "+((DcMotorEx) armMotor).getVelocity());
                 return false;
             }
         }
@@ -354,6 +363,26 @@ public class Mechanisms {
         public Action armAttachHangingHook(){
             return new ArmHangingHook();
         }
+
+        public class ArmHang implements Action {
+            // checks if the lift motor has been powered on
+            private boolean initialized = false;
+            // actions are formatted via telemetry packets as below
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                // powers on motor, if it is not on
+                if (!initialized) {
+                    target = ARM_HANG;
+                    armMotor.setPower(0.8);
+                    initialized = true;
+                }
+                return RunToPos(packet);
+            }
+        }
+        public Action armHang()
+        {
+            return new ArmHang();
+        }
         public class ArmClear implements Action {
             // checks if the lift motor has been powered on
             private boolean initialized = false;
@@ -444,23 +473,27 @@ public class Mechanisms {
             armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             armMotor.setTargetPosition(0);
             armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            //armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         }
 
         public boolean RunToPos(@NonNull TelemetryPacket packet) {
-            //set the target position of the lift to 3000 ticks
+            ((DcMotorEx) armMotor).setTargetPositionTolerance(20);
             armMotor.setTargetPosition(target+armPositionFudgeFactor+slideReset);
-            //((DcMotorEx) armMotor).setVelocity(2100);
             int tolerance = ((DcMotorEx) armMotor).getTargetPositionTolerance()+2;
             armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            //return false;
+            int armDistance = Math.abs(armMotor.getCurrentPosition()-armMotor.getTargetPosition());
+            if (armDistance < 500) {
+                ((DcMotorEx) armMotor).setVelocity(500);
+            } else {
+                ((DcMotorEx) armMotor).setVelocity(2100);
+            }
             if(lastPos==armMotor.getCurrentPosition()){
                 stuckCounter++;
             } else {
                 stuckCounter = 0;
             }
-            if ((Math.abs(armMotor.getCurrentPosition()-armMotor.getTargetPosition())>tolerance)&&stuckCounter<100) {
+            if ((armDistance>tolerance)&&stuckCounter<100) {
                 // true causes the action to rerun
                 RobotLog.ii("DbgLog", "Slide Running: Target: "+armMotor.getTargetPosition()+" Position: "+armMotor.getCurrentPosition()+" Stuck Counter: "+stuckCounter);
                 lastPos = armMotor.getCurrentPosition();
