@@ -151,7 +151,7 @@ public class Mechanisms {
             public boolean run(@NonNull TelemetryPacket packet) {
                 if (!initialized){
                     timer = 0;
-                    intake.setPower(1);
+                    intake.setPower(-0.75);
                     initialized = true;
                     RobotLog.ii("DbgLog", "Init: Intake Deposit");
                     RobotLog.ii("DbgLog", "Intake Timer: "+timer);
@@ -201,7 +201,7 @@ public class Mechanisms {
         //values copied from TeleOpV3
         final int ARM_COLLAPSED_INTO_ROBOT  = 10;
         final int ARM_COLLECT               = (int) (17 * ARM_TICKS_PER_DEGREE);
-        final int ARM_COLLECT_LOW           = (int) (10.5 * ARM_TICKS_PER_DEGREE);
+        final int ARM_COLLECT_LOW           = (int) (0 * ARM_TICKS_PER_DEGREE);
         final int ARM_CLEAR_BARRIER         = (int) (25 * ARM_TICKS_PER_DEGREE);
         final int ARM_SCORE_SPECIMEN        = (int) (64 * ARM_TICKS_PER_DEGREE);
         final int ARM_SCORE_SAMPLE_IN_LOW   = (int) (83 * ARM_TICKS_PER_DEGREE);
@@ -235,16 +235,16 @@ public class Mechanisms {
 
         }
         public boolean RunToPos(@NonNull TelemetryPacket packet) {
-            ((DcMotorEx) armMotor).setTargetPositionTolerance(20);
+            ((DcMotorEx) armMotor).setTargetPositionTolerance(100);
             armMotor.setTargetPosition(target+armPositionFudgeFactor);
             int tolerance = ((DcMotorEx) armMotor).getTargetPositionTolerance()+1;
             armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             int armDistance = Math.abs(armMotor.getCurrentPosition()-armMotor.getTargetPosition());
-            if (armDistance < 500) {
-                ((DcMotorEx) armMotor).setVelocity(500);
+            /*if (armDistance < 1200) {
+                ((DcMotorEx) armMotor).setVelocity(1500);
             } else {
                 ((DcMotorEx) armMotor).setVelocity(2100);
-            }
+            }*/
             if (armDistance>tolerance) {
                 // true causes the action to rerun
                 return true;
@@ -478,16 +478,16 @@ public class Mechanisms {
         }
 
         public boolean RunToPos(@NonNull TelemetryPacket packet) {
-            ((DcMotorEx) armMotor).setTargetPositionTolerance(20);
+            ((DcMotorEx) armMotor).setTargetPositionTolerance(100);
             armMotor.setTargetPosition(target+armPositionFudgeFactor+slideReset);
             int tolerance = ((DcMotorEx) armMotor).getTargetPositionTolerance()+2;
             armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             int armDistance = Math.abs(armMotor.getCurrentPosition()-armMotor.getTargetPosition());
-            if (armDistance < 500) {
-                ((DcMotorEx) armMotor).setVelocity(500);
+            /*if (armDistance < 1200) {
+                ((DcMotorEx) armMotor).setVelocity(1500);
             } else {
                 ((DcMotorEx) armMotor).setVelocity(2100);
-            }
+            }*/
             if(lastPos==armMotor.getCurrentPosition()){
                 stuckCounter++;
             } else {

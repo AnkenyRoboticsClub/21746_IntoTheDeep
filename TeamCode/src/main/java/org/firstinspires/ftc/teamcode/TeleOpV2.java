@@ -209,6 +209,7 @@ public class TeleOpV2 extends LinearOpMode {
                         slide.armRun()
                 ));
             }
+            //note: need to make in go back to zero when you release!!!
 
             /*call our mecanum drive function from ftclib using field centric control,
             if you want robotcentric, change "Field" to "Robot" and remove the imuValue variable,
