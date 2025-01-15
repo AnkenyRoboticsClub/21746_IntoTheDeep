@@ -48,17 +48,30 @@ public class MeepMeepTesting {
                 .build();
 
         mySecondBot.runAction(mySecondBot.getDrive().actionBuilder(new Pose2d(-33, -63, Math.toRadians(-90)))
-                .strafeToLinearHeading(new Vector2d(-49.5, -49.5), Math.toRadians(225))
-                .strafeToLinearHeading(new Vector2d(-47, -47), Math.toRadians(225))
+                //score preload
+                .strafeToLinearHeading(new Vector2d(-50.25, -50.25), Math.toRadians(225))
+                //.strafeToLinearHeading(new Vector2d(-47, -47), Math.toRadians(225))
+                //get 1st off ground
                 .strafeToLinearHeading(new Vector2d(-33, -40), Math.toRadians(160))
                 .strafeToLinearHeading(new Vector2d(-34, -32), Math.toRadians(160))
-                .strafeToLinearHeading(new Vector2d(-40, -30), Math.toRadians(160))
-                .strafeToLinearHeading(new Vector2d(-49.5, -49.5), Math.toRadians(225))
-                .strafeToLinearHeading(new Vector2d(-47, -47), Math.toRadians(225))
-                //.strafeToLinearHeading(new Vector2d(-36, -32), Math.toRadians(90))
-                //.splineToLinearHeading(new Pose2d(-40, -20, Math.toRadians(180)),Math.toRadians(90))
-                //.strafeToLinearHeading(new Vector2d(-40, -40), Math.toRadians(180))
-                .splineToLinearHeading(new Pose2d(-40, -20, Math.toRadians(225)),Math.toRadians(90))
+                .strafeToLinearHeading(new Vector2d(-42, -31), Math.toRadians(160))
+                //score 1st
+                .strafeToLinearHeading(new Vector2d(-50.25, -50.25), Math.toRadians(225))
+                //.strafeToLinearHeading(new Vector2d(-47, -47), Math.toRadians(225))
+                //get 2nd off ground
+                .strafeToLinearHeading(new Vector2d(-44, -25), Math.toRadians(180))
+                .strafeToLinearHeading(new Vector2d(-52, -25), Math.toRadians(180))
+                //score 2nd
+                .strafeToLinearHeading(new Vector2d(-50.25, -50.25), Math.toRadians(225))
+                //.strafeToLinearHeading(new Vector2d(-47, -47), Math.toRadians(225))
+                //get 3rd off ground
+                .strafeToLinearHeading(new Vector2d(-54, -25), Math.toRadians(180))
+                .strafeToLinearHeading(new Vector2d(-62, -25), Math.toRadians(180))
+                //score 3rd
+                .strafeToLinearHeading(new Vector2d(-50.25, -50.25), Math.toRadians(225))
+                //.strafeToLinearHeading(new Vector2d(-47, -47), Math.toRadians(225))
+                //park
+                .strafeToLinearHeading(new Vector2d(-40, -20), Math.toRadians(225))
                 .splineToLinearHeading(new Pose2d(-35, -11, Math.toRadians(225)),Math.toRadians(0))
                 .strafeToLinearHeading(new Vector2d(-25, -11), Math.toRadians(180))
                 .build());
