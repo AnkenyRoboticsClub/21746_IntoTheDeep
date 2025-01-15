@@ -47,42 +47,67 @@ public class LeftAutoV7 extends LinearOpMode {
         slide.armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         TrajectoryActionBuilder scorePreload = drive.actionBuilder(initialPose)
-                .afterTime(0, arm.armScoreHigh())
+                .afterTime(0.7, arm.armScoreHigh())
+                .afterTime(0.7, wrist.foldOutWrist())
                 .strafeToLinearHeading(new Vector2d(-50.25, -50.25), Math.toRadians(225))
-                .afterTime(0, wrist.foldOutWrist())
                 ;
 
-        TrajectoryActionBuilder preloadBackup = scorePreload.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(-47, -47), Math.toRadians(225))
-                .afterTime(0, slide.armCollapse())
-                .afterTime(0, arm.armClear())
+        TrajectoryActionBuilder getBlock1 = scorePreload.endTrajectory().fresh()
+                .afterTime(0.5, slide.armCollapse())
                 .strafeToLinearHeading(new Vector2d(-33, -40), Math.toRadians(160))
+                .afterTime(0, arm.armCollectLow())
                 .afterTime(0, intake.intakeOff())
-                ;
-
-        TrajectoryActionBuilder driveToBlock1 = preloadBackup.endTrajectory().fresh()
                 .strafeToLinearHeading(new Vector2d(-34, -32), Math.toRadians(160))
-                ;
-
-        TrajectoryActionBuilder pickupBlock1 = driveToBlock1.endTrajectory().fresh()
                 .afterTime(0, intake.intakeCollect())
                 .strafeToLinearHeading(new Vector2d(-42, -31), Math.toRadians(160))
                 ;
-        TrajectoryActionBuilder scoreBlock1 = pickupBlock1.endTrajectory().fresh()
+
+        TrajectoryActionBuilder scoreBlock1 = getBlock1.endTrajectory().fresh()
                 .afterTime(0, arm.armScoreHigh())
+                .afterTime(1, slide.armScoreHigh())
                 .strafeToLinearHeading(new Vector2d(-50.25, -50.25), Math.toRadians(225))
                 ;
 
-        TrajectoryActionBuilder backupPark = scoreBlock1.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(-47, -47), Math.toRadians(225))
-                .afterTime(0, slide.armCollapse())
-                .splineToLinearHeading(new Pose2d(-40, -20, Math.toRadians(225)),Math.toRadians(90))
+        TrajectoryActionBuilder getBlock2 = scoreBlock1.endTrajectory().fresh()
+                .afterTime(0.5, slide.armCollapse())
+                .afterTime(1, arm.armCollectLow())
+                .afterTime(0, intake.intakeOff())
+                .strafeToLinearHeading(new Vector2d(-44, -25), Math.toRadians(180))
+                .afterTime(0, intake.intakeCollect())
+                .strafeToLinearHeading(new Vector2d(-52, -25), Math.toRadians(180))
+                ;
+
+        TrajectoryActionBuilder scoreBlock2 = getBlock2.endTrajectory().fresh()
+                .afterTime(0, arm.armScoreHigh())
+                .afterTime(1, slide.armScoreHigh())
+                .strafeToLinearHeading(new Vector2d(-50.25, -50.25), Math.toRadians(225))
+                ;
+
+        TrajectoryActionBuilder getBlock3 = scoreBlock2.endTrajectory().fresh()
+                .afterTime(0.5, slide.armCollapse())
+                .afterTime(1, arm.armCollectLow())
+                .afterTime(0, intake.intakeOff())
+                .strafeToLinearHeading(new Vector2d(-54, -25), Math.toRadians(180))
+                .afterTime(0, intake.intakeCollect())
+                .strafeToLinearHeading(new Vector2d(-62, -25), Math.toRadians(180))
+                ;
+
+        TrajectoryActionBuilder scoreBlock3 = getBlock3.endTrajectory().fresh()
+                .afterTime(0, arm.armScoreHigh())
+                .afterTime(1, slide.armScoreHigh())
+                .strafeToLinearHeading(new Vector2d(-50.25, -50.25), Math.toRadians(225))
+                ;
+
+        TrajectoryActionBuilder park = scoreBlock3.endTrajectory().fresh()
+                .afterTime(0.5, slide.armCollapse())
+                .strafeToLinearHeading(new Vector2d(-40, -20), Math.toRadians(225))
                 .afterTime(0, intake.intakeOff())
                 .afterTime(0.1, arm.armAttachHangingHook())
                 .splineToLinearHeading(new Pose2d(-35, -11, Math.toRadians(225)),Math.toRadians(0))
-                .strafeToLinearHeading(new Vector2d(-27, -11), Math.toRadians(180))
                 .afterTime(0, wrist.foldInWrist())
+                .strafeToLinearHeading(new Vector2d(-25, -11), Math.toRadians(180))
                 ;
+
 
         //wait for autonomous to start
         waitForStart();
@@ -94,23 +119,27 @@ public class LeftAutoV7 extends LinearOpMode {
         Actions.runBlocking(
                 new SequentialAction(
                         //score preload
-                        scorePreload.build()
-                        , wrist.foldOutWrist()
-                        , slide.armScoreHigh()
-                        , intake.intakeDeposit()
-                        , preloadBackup.build()
-                        //pickup 1st
-                        , driveToBlock1.build()
-                        , arm.armCollectLow()
-                        , pickupBlock1.build()
-                        , intake.intakeOff()
+                        scorePreload.build(),
+                        slide.armScoreHigh(),
+                        intake.intakeDeposit(),
+                        //get 1st
+                        getBlock1.build(),
                         //score 1st
-                        , scoreBlock1.build()
-                        , slide.armScoreHigh()
-                        , intake.intakeDeposit()
+                        scoreBlock1.build(),
+                        intake.intakeDeposit(),
+                        //get 2nd
+                        getBlock2.build(),
+                        //score 2nd
+                        scoreBlock2.build(),
+                        intake.intakeDeposit(),
+                        //get 3rd
+                        getBlock3.build(),
+                        //score 3rd
+                        scoreBlock3.build(),
+                        intake.intakeDeposit(),
                         //park
-                        , backupPark.build()
-                        , arm.armHang()
+                        park.build(),
+                        arm.armHang()
                 )
         );
     }

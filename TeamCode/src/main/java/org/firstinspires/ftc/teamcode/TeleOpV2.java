@@ -114,8 +114,6 @@ public class TeleOpV2 extends LinearOpMode {
             double leftTrig2 = driver2.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER);
             double rightJoy2 = driver2.getRightY();
             double leftJoy2 = driver2.getLeftY();
-            arm.armPositionFudgeFactor = (int) (arm.FUDGE_FACTOR * (rightTrig2-leftTrig2+(leftJoy2*2)));
-            slide.armPositionFudgeFactor = (int) (slide.FUDGE_FACTOR*rightJoy2);
 
             if (driver1.getButton(GamepadKeys.Button.START)){
                 lazyImu.get().resetYaw();
@@ -199,12 +197,26 @@ public class TeleOpV2 extends LinearOpMode {
                             ,slide.armScoreSpecimen()
                     ));
                 }
-            if (Math.abs(rightTrig2-leftTrig2+(leftJoy2*2))>0.2){
+
+            if (Math.abs(rightTrig2-leftTrig2+(leftJoy2*2))>0.2) {
+                arm.armPositionFudgeFactor = (int) (arm.FUDGE_FACTOR * (rightTrig2 - leftTrig2 + (leftJoy2 * 2)));
+                runningActions.add(new ParallelAction(
+                        arm.armRun()
+                ));
+            } else if (arm.armPositionFudgeFactor!=0){
+                arm.armPositionFudgeFactor = 0;
                 runningActions.add(new ParallelAction(
                         arm.armRun()
                 ));
             }
+
             if (Math.abs(rightJoy2)>0.4){
+                slide.armPositionFudgeFactor = (int) (slide.FUDGE_FACTOR*rightJoy2);
+                runningActions.add(new ParallelAction(
+                        slide.armRun()
+                ));
+            } else if (slide.armPositionFudgeFactor!=0){
+                slide.armPositionFudgeFactor = 0;
                 runningActions.add(new ParallelAction(
                         slide.armRun()
                 ));

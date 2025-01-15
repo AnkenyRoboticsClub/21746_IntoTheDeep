@@ -456,6 +456,8 @@ public class Mechanisms {
         public int slideReset = 0;
         private int stuckCounter = 0;
         private int lastPos = 0;
+
+        public int power = 1;
         //create lift from hardwaremap and initialize it
 
         public Slide(HardwareMap hardwareMap) {
@@ -519,7 +521,7 @@ public class Mechanisms {
                 // powers on motor, if it is not on
                 if (!initialized) {
                     target = ARM_SCORE_SAMPLE_IN_LOW;
-                    armMotor.setPower(0.8);
+                    armMotor.setPower(power);
                     initialized = true;
                 }
                 return RunToPos(packet);
@@ -537,7 +539,7 @@ public class Mechanisms {
                 // powers on motor, if it is not on
                 if (!initialized) {
                     target = ARM_SCORE_SAMPLE_IN_HIGH;
-                    armMotor.setPower(0.8);
+                    armMotor.setPower(power);
                     initialized = true;
                 }
                 return RunToPos(packet);
@@ -555,7 +557,7 @@ public class Mechanisms {
                 // powers on motor, if it is not on
                 if (!initialized) {
                     target = ARM_COLLAPSED_INTO_ROBOT;
-                    armMotor.setPower(0.8);
+                    armMotor.setPower(power);
                     initialized = true;
                 }
                 return RunToPos(packet);
@@ -573,7 +575,7 @@ public class Mechanisms {
                 // powers on motor, if it is not on
                 if (!initialized) {
                     target = ARM_COLLECT;
-                    armMotor.setPower(0.8);
+                    armMotor.setPower(power);
                     initialized = true;
                 }
                 return RunToPos(packet);
@@ -591,7 +593,7 @@ public class Mechanisms {
                 // powers on motor, if it is not on
                 if (!initialized) {
                     target = ARM_ATTACH_HANGING_HOOK;
-                    armMotor.setPower(0.8);
+                    armMotor.setPower(power);
                     initialized = true;
                 }
                 return RunToPos(packet);
@@ -609,7 +611,7 @@ public class Mechanisms {
                 // powers on motor, if it is not on
                 if (!initialized) {
                     target = ARM_CLEAR_BARRIER;
-                    armMotor.setPower(0.8);
+                    armMotor.setPower(power);
                     initialized = true;
                 }
                 return RunToPos(packet);
@@ -628,7 +630,7 @@ public class Mechanisms {
                 // powers on motor, if it is not on
                 if (!initialized) {
                     target = ARM_SCORE_SPECIMEN;
-                    armMotor.setPower(0.8);
+                    armMotor.setPower(power);
                     initialized = true;
                 }
                 return RunToPos(packet);
@@ -646,7 +648,7 @@ public class Mechanisms {
             public boolean run(@NonNull TelemetryPacket packet) {
                 // powers on motor, if it is not on
                 if (!initialized) {
-                    armMotor.setPower(0.8);
+                    armMotor.setPower(power);
                     initialized = true;
                 }
                 return RunToPos(packet);
