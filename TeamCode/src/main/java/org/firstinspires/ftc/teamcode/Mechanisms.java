@@ -66,8 +66,8 @@ public class Mechanisms {
         private CRServo intake;
         private boolean firstTime = false;
         private double timer = 0;
-        private final int intakeTime =40000;
-        private final int depositTime =40000;
+        private final int intakeTime =50000;//40000;
+        private final int depositTime =50000;//40000;
         //how many times it runs so that it will let it run for a bit before moving to the next action in auto
 
         public Intake(HardwareMap hardwareMap) {
@@ -207,7 +207,7 @@ public class Mechanisms {
         final int ARM_SCORE_SAMPLE_IN_LOW   = (int) (83 * ARM_TICKS_PER_DEGREE);
         final int ARM_SCORE_SAMPLE_IN_HIGH   = (int) (87 * ARM_TICKS_PER_DEGREE);
         final int ARM_ATTACH_HANGING_HOOK   = (int) (110 * ARM_TICKS_PER_DEGREE);
-        final int ARM_HANG   = (int) (130 * ARM_TICKS_PER_DEGREE);
+        final int ARM_HANG   = (int) (135 * ARM_TICKS_PER_DEGREE);
         final int ARM_WINCH_ROBOT           = (int) (10  * ARM_TICKS_PER_DEGREE);
         final int FUDGE_FACTOR = (int) (10 * ARM_TICKS_PER_DEGREE);
         //public Motor arm;

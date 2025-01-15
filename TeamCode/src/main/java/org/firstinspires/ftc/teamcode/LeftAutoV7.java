@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive;
 @Config
 //Need the autnomous tag in order for it show up on driver station as an autonomous program
 // You can also set the name of the autonomous and the group
-@Autonomous(name = "LeftV6", group = "Autonomous")
+@Autonomous(name = "LeftV7", group = "Autonomous")
 public class LeftAutoV7 extends LinearOpMode {
 
     @Override
@@ -49,7 +49,7 @@ public class LeftAutoV7 extends LinearOpMode {
         TrajectoryActionBuilder scorePreload = drive.actionBuilder(initialPose)
                 .afterTime(0.7, arm.armScoreHigh())
                 .afterTime(0.7, wrist.foldOutWrist())
-                .strafeToLinearHeading(new Vector2d(-50.25, -50.25), Math.toRadians(225))
+                .strafeToLinearHeading(new Vector2d(-49.75, -49.75), Math.toRadians(225))
                 ;
 
         TrajectoryActionBuilder getBlock1 = scorePreload.endTrajectory().fresh()
@@ -65,44 +65,43 @@ public class LeftAutoV7 extends LinearOpMode {
         TrajectoryActionBuilder scoreBlock1 = getBlock1.endTrajectory().fresh()
                 .afterTime(0, arm.armScoreHigh())
                 .afterTime(1, slide.armScoreHigh())
-                .strafeToLinearHeading(new Vector2d(-50.25, -50.25), Math.toRadians(225))
+                .strafeToLinearHeading(new Vector2d(-49.75, -49.75), Math.toRadians(225))
                 ;
 
         TrajectoryActionBuilder getBlock2 = scoreBlock1.endTrajectory().fresh()
                 .afterTime(0.5, slide.armCollapse())
                 .afterTime(1, arm.armCollectLow())
                 .afterTime(0, intake.intakeOff())
-                .strafeToLinearHeading(new Vector2d(-44, -25), Math.toRadians(180))
+                .strafeToLinearHeading(new Vector2d(-42, -27), Math.toRadians(180))
                 .afterTime(0, intake.intakeCollect())
-                .strafeToLinearHeading(new Vector2d(-52, -25), Math.toRadians(180))
+                .strafeToLinearHeading(new Vector2d(-52, -27), Math.toRadians(180))
                 ;
 
         TrajectoryActionBuilder scoreBlock2 = getBlock2.endTrajectory().fresh()
                 .afterTime(0, arm.armScoreHigh())
                 .afterTime(1, slide.armScoreHigh())
-                .strafeToLinearHeading(new Vector2d(-50.25, -50.25), Math.toRadians(225))
+                .strafeToLinearHeading(new Vector2d(-49.75, -49.75), Math.toRadians(225))
                 ;
 
         TrajectoryActionBuilder getBlock3 = scoreBlock2.endTrajectory().fresh()
-                .afterTime(0.5, slide.armCollapse())
-                .afterTime(1, arm.armCollectLow())
+                .afterTime(0.25, arm.armCollectLow())
                 .afterTime(0, intake.intakeOff())
-                .strafeToLinearHeading(new Vector2d(-54, -25), Math.toRadians(180))
+                .strafeToLinearHeading(new Vector2d(-54, -27), Math.toRadians(180))
                 .afterTime(0, intake.intakeCollect())
-                .strafeToLinearHeading(new Vector2d(-62, -25), Math.toRadians(180))
+                .strafeToLinearHeading(new Vector2d(-60, -27), Math.toRadians(180))
                 ;
 
         TrajectoryActionBuilder scoreBlock3 = getBlock3.endTrajectory().fresh()
                 .afterTime(0, arm.armScoreHigh())
                 .afterTime(1, slide.armScoreHigh())
-                .strafeToLinearHeading(new Vector2d(-50.25, -50.25), Math.toRadians(225))
+                .strafeToLinearHeading(new Vector2d(-49.75, -49.75), Math.toRadians(225))
                 ;
 
         TrajectoryActionBuilder park = scoreBlock3.endTrajectory().fresh()
                 .afterTime(0.5, slide.armCollapse())
                 .strafeToLinearHeading(new Vector2d(-40, -20), Math.toRadians(225))
                 .afterTime(0, intake.intakeOff())
-                .afterTime(0.1, arm.armAttachHangingHook())
+                .afterTime(0.1, arm.armHang())
                 .splineToLinearHeading(new Pose2d(-35, -11, Math.toRadians(225)),Math.toRadians(0))
                 .afterTime(0, wrist.foldInWrist())
                 .strafeToLinearHeading(new Vector2d(-25, -11), Math.toRadians(180))
@@ -132,14 +131,14 @@ public class LeftAutoV7 extends LinearOpMode {
                         //score 2nd
                         scoreBlock2.build(),
                         intake.intakeDeposit(),
+                        slide.armCollapse(),
                         //get 3rd
                         getBlock3.build(),
                         //score 3rd
                         scoreBlock3.build(),
                         intake.intakeDeposit(),
                         //park
-                        park.build(),
-                        arm.armHang()
+                        park.build()
                 )
         );
     }

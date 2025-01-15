@@ -120,7 +120,7 @@ public class TeleOpV2 extends LinearOpMode {
             }
 
             if (driver2.getButton(GamepadKeys.Button.START)){
-                slide.slideReset = slide.armMotor.getCurrentPosition();
+                slide.slideReset = slide.armMotor.getCurrentPosition();//-slide.target;
             }
 
                 if (driver2.getButton(GamepadKeys.Button.A)) {
