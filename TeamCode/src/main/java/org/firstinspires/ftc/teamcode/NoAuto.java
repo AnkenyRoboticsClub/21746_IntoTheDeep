@@ -14,8 +14,8 @@ import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive;
 @Config
 //Need the autnomous tag in order for it show up on driver station as an autonomous program
 // You can also set the name of the autonomous and the group
-@Autonomous(name = "LeftV7", group = "Autonomous")
-public class LeftAutoV7 extends LinearOpMode {
+@Autonomous(name = "NoAuto", group = "Autonomous")
+public class NoAuto extends LinearOpMode {
 
     @Override
     public void runOpMode() {
@@ -117,31 +117,7 @@ public class LeftAutoV7 extends LinearOpMode {
         //run actions sequentially, so it will run each action in order
         Actions.runBlocking(
                 new SequentialAction(
-                        //score preload
-                        scorePreload.build(),
-                        slide.armScoreHigh(),
-                        intake.intakeDeposit(),
-                        //get 1st
-                        getBlock1.build(),
-                        intake.intakeOff(),
-                        //score 1st
-                        scoreBlock1.build(),
-                        intake.intakeDeposit(),
-                        //get 2nd
-                        getBlock2.build(),
-                        intake.intakeOff(),
-                        //score 2nd
-                        scoreBlock2.build(),
-                        intake.intakeDeposit(),
-                        slide.armCollapse(),
-                        //get 3rd
-                        getBlock3.build(),
-                        intake.intakeOff(),
-                        //score 3rd
-                        scoreBlock3.build(),
-                        intake.intakeDeposit(),
-                        //park
-                        park.build()
+
                 )
         );
     }

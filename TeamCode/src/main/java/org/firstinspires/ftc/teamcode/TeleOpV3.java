@@ -3,6 +3,9 @@ package org.firstinspires.ftc.teamcode;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.ParallelAction;
+import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
+import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.LazyImu;
 import com.arcrobotics.ftclib.drivebase.MecanumDrive;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
@@ -25,6 +28,16 @@ import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.SequentialAction;
+import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
+import com.acmerobotics.roadrunner.Vector2d;
+import com.acmerobotics.roadrunner.ftc.Actions;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
 //Call the teleop so it shows up on the driver station
 @TeleOp(name = "TeleOpV3", group = "TeleOp")
@@ -81,6 +94,9 @@ public class TeleOpV3 extends LinearOpMode {
                     rightBack
             );
 
+
+
+
         //initialize controllers
             GamepadEx driver1 = new GamepadEx(gamepad1);
             GamepadEx driver2 = new GamepadEx(gamepad2);
@@ -97,12 +113,17 @@ public class TeleOpV3 extends LinearOpMode {
 
         limelight.pipelineSwitch(0);
 
+        limelight.setPollRateHz(100); // This sets how often we ask Limelight for data (100 times per second)
+
         /*
          * Starts polling for data.  If you neglect to call start(), getLatestResult() will return null.
          */
         limelight.start();
         //wait for the driver station to start
             waitForStart();
+
+        double xin = 0;
+        double yin = 0;
 
     //primary while loop to call your various functions during driver control from
         while(opModeIsActive() && !isStopRequested()) {
@@ -117,7 +138,7 @@ public class TeleOpV3 extends LinearOpMode {
             telemetry.addData("Pipeline", "Index: %d, Type: %s",
                     status.getPipelineIndex(), status.getPipelineType());
 
-            LLResult result = limelight.getLatestResult();
+            /*LLResult result = limelight.getLatestResult();
             // First, tell Limelight which way your robot is facing
             //double robotYaw = imu.getAngularOrientation().firstAngle;
             double robotYaw = lazyImu.get().getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
@@ -130,7 +151,18 @@ public class TeleOpV3 extends LinearOpMode {
                     telemetry.addData("MT2 Location:", "(" + x + ", " + y + ")");
                     RobotLog.ii("DbgLog", "MT2 Location:", "(" + x + ", " + y + ")");
                 }
-            }
+            }*/
+            /*LLResult result = limelight.getLatestResult();
+            if (result != null) {
+                if (result.isValid()) {
+                    Pose3D botpose = result.getBotpose();
+                    telemetry.addData("tx", result.getTx());
+                    telemetry.addData("ty", result.getTy());
+                    telemetry.addData("Botpose", botpose.toString());
+                    telemetry.addData("Field X ",botpose.getPosition().x*23);
+                }
+            }*/
+
 
             // updated based on gamepads
 
@@ -151,6 +183,34 @@ public class TeleOpV3 extends LinearOpMode {
             //read controller buttons
             driver1.readButtons();
             driver2.readButtons();
+
+            LLResult result = limelight.getLatestResult();
+            if (result != null && result.isValid()) {
+                Pose3D botpose = result.getBotpose();
+                if (botpose != null) {
+                    double x = botpose.getPosition().x;
+                    double y = botpose.getPosition().y;
+                    telemetry.addData("MT1 Location", "(" + x + ", " + y + ")");
+                    xin = botpose.getPosition().x*39.37;
+                    yin = botpose.getPosition().y*39.37;
+                    telemetry.addData("MT1 Location Inches", "(xin: " + (int)xin + ", yin: " + (int)yin + ")");
+                    telemetry.addData("MT1 Heading and IMU Heading:", "MT1: " + botpose.getOrientation().getYaw(AngleUnit.DEGREES)  + ", IMU: " + lazyImu.get().getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
+
+                    if (driver1.wasJustPressed(GamepadKeys.Button.DPAD_DOWN)){
+                        leftFront.setInverted(true);
+                        leftBack.setInverted(true);
+                        Pose2d initialPose = new Pose2d(xin, yin, botpose.getOrientation().getYaw(AngleUnit.RADIANS));
+                        org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive drive2 = new org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive(hardwareMap, initialPose);
+                        TrajectoryActionBuilder score = drive2.actionBuilder(initialPose)
+                                .strafeToLinearHeading(new Vector2d(-49.75, -49.75), Math.toRadians(225))
+                                ;
+                        runningActions.add(new ParallelAction(
+                                score.build()
+                        ));
+                    }
+
+                }
+            }
 
             double rightTrig2 = driver2.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER);
             double leftTrig2 = driver2.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER);
@@ -276,12 +336,18 @@ public class TeleOpV3 extends LinearOpMode {
                 yMult = 1;
                 rMult = 1;
             }
+            if (!driver1.getButton(GamepadKeys.Button.DPAD_DOWN)) {
+                leftFront.setInverted(false);
+                leftBack.setInverted(false);
+                rightFront.setInverted(false);
+                rightBack.setInverted(false);
                 drive.driveFieldCentric(
-                        -driver1.getLeftX()*xMult,
-                        -driver1.getLeftY()*yMult,
-                        -driver1.getRightX()*rMult,
+                        -driver1.getLeftX() * xMult,
+                        -driver1.getLeftY() * yMult,
+                        -driver1.getRightX() * rMult,
                         lazyImu.get().getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES)
-                    );
+                );
+            }
             telemetry.addData("lazyImu: ", lazyImu.get().getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
             telemetry.addData("arm encoder: ", arm.armMotor.getCurrentPosition());
             telemetry.addData("arm target: ", arm.armMotor.getTargetPosition());
