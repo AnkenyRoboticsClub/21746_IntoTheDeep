@@ -13,6 +13,7 @@ import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.qualcomm.hardware.adafruit.AdafruitBNO055IMU;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -41,6 +42,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 //Call the teleop so it shows up on the driver station
 @TeleOp(name = "TeleOpV3", group = "TeleOp")
+@Disabled
 public class TeleOpV3 extends LinearOpMode {
     private Limelight3A limelight;
     //can have variables and define hardware objects here, anything from here to "waitForStart();" will run in initialization.

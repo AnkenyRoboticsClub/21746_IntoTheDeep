@@ -6,6 +6,7 @@ import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
@@ -15,6 +16,7 @@ import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive;
 //Need the autnomous tag in order for it show up on driver station as an autonomous program
 // You can also set the name of the autonomous and the group
 @Autonomous(name = "LeftV6", group = "Autonomous")
+@Disabled
 public class LeftAutoV6 extends LinearOpMode {
 
     @Override

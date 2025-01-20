@@ -11,6 +11,7 @@ import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.qualcomm.hardware.adafruit.AdafruitBNO055IMU;
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.IMU;
@@ -23,6 +24,7 @@ import java.util.List;
 
 //Call the teleop so it shows up on the driver station
 @TeleOp(name = "SAMPLE_TELEOP", group = "TeleOp")
+@Disabled
 public class SampleTeleOp extends LinearOpMode {
     //can have variables and define hardware objects here, anything from here to "waitForStart();" will run in initialization.
 
