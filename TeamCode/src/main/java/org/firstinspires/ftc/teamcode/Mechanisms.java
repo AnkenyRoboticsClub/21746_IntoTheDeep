@@ -67,8 +67,11 @@ public class Mechanisms {
         private boolean firstTime = false;
         private double timer = 0;
         private final int intakeTime =50000;//40000;
-        private final int depositTime =50000;//40000;
+        private final int depositTime =60000;//40000;
         //how many times it runs so that it will let it run for a bit before moving to the next action in auto
+
+        private long starting = System.currentTimeMillis();
+        private long currentTime=0;
 
         public Intake(HardwareMap hardwareMap) {
             intake = hardwareMap.get(CRServo.class, "intake");
@@ -86,7 +89,9 @@ public class Mechanisms {
                     initialized = true;
                     RobotLog.ii("DbgLog", "Init: Intake Collect");
                     RobotLog.ii("DbgLog", "Intake Timer: "+timer);
+                    starting = System.currentTimeMillis();
                 } else {
+                    currentTime = System.currentTimeMillis()-starting;
                     timer++;
                 }
                 /*if (!initialized){
@@ -109,6 +114,7 @@ public class Mechanisms {
                     //firstTime = false;
                     RobotLog.ii("DbgLog", "End: Intake Collect");
                     RobotLog.ii("DbgLog", "Intake Timer: "+timer);
+                    RobotLog.ii("DbgLog", "Time: "+ (currentTime));
                     timer = 0;
                     return false;
 
@@ -155,7 +161,9 @@ public class Mechanisms {
                     initialized = true;
                     RobotLog.ii("DbgLog", "Init: Intake Deposit");
                     RobotLog.ii("DbgLog", "Intake Timer: "+timer);
+                    starting = System.currentTimeMillis();
                 } else {
+                    currentTime = System.currentTimeMillis()-starting;
                     timer++;
                 }
                 /*if (!initialized){
@@ -178,6 +186,7 @@ public class Mechanisms {
                     //firstTime = false;
                     RobotLog.ii("DbgLog", "End: Intake Deposit");
                     RobotLog.ii("DbgLog", "Intake Timer: "+timer);
+                    RobotLog.ii("DbgLog", "Time: "+ (currentTime));
                     timer = 0;
                     return false;
 

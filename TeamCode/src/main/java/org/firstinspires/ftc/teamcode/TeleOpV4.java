@@ -19,6 +19,7 @@ import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
@@ -177,27 +178,30 @@ public class TeleOpV4 extends LinearOpMode {
                 if (botpose != null) {
                     double x = botpose.getPosition().x;
                     double y = botpose.getPosition().y;
-                    telemetry.addData("MT1 Location", "(" + x + ", " + y + ")");
+                    //telemetry.addData("MT1 Location", "(" + x + ", " + y + ")");
                     xin = botpose.getPosition().x*39.37;
                     yin = botpose.getPosition().y*39.37;
                     telemetry.addData("MT1 Location Inches", "(xin: " + (int)xin + ", yin: " + (int)yin + ")");
-                    telemetry.addData("MT1 Heading and IMU Heading:", "MT1: " + botpose.getOrientation().getYaw(AngleUnit.DEGREES)  + ", IMU: " + lazyImu.get().getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
+                    RobotLog.ii("DbgLog", "MT1 Location Inches"+ "(xin: " + (int)xin + ", yin: " + (int)yin + ")");
+                    telemetry.addData("MT1 Heading and IMU Heading:", "MT1: " + (int) botpose.getOrientation().getYaw(AngleUnit.DEGREES)  + ", IMU: " + (int) lazyImu.get().getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
 
-                    if (driver1.wasJustPressed(GamepadKeys.Button.DPAD_DOWN)){
+                    //if (driver1.wasJustPressed(GamepadKeys.Button.DPAD_DOWN)){
                         // left right msec
                         //gamepad1.rumble(0.9, 0, 200);
 
                         //red
-                        double xdiff1 = Math.abs(xin-(-49.75));
-                        double ydiff1 = Math.abs(yin-(-49.75));
+                        double xdiff1 = Math.abs(xin-(-43));
+                        double ydiff1 = Math.abs(yin-(-43));
                         //blue
-                        double xdiff2 = Math.abs(xin-(49.75));
-                        double ydiff2 = Math.abs(yin-(49.75));
+                        double xdiff2 = Math.abs(xin-(43));
+                        double ydiff2 = Math.abs(yin-(43));
 
                         double dirDiff = Math.abs(225-lazyImu.get().getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
 
-                        double maxDiff = 2;
-                        double maxDirDiff = 5;
+                        double maxDiff = 4;
+                        double maxDirDiff = 7;
+
+                        RobotLog.ii("DbgLog", "redx"+xdiff1+" redy"+ydiff1+" bluex"+xdiff2+" bluey"+ydiff2);
 
                         if((xdiff1<maxDiff&&ydiff1<maxDiff)||(xdiff2<maxDiff&&ydiff2<maxDiff)){
                             double leftPower = 0;
@@ -210,8 +214,10 @@ public class TeleOpV4 extends LinearOpMode {
                             if (dirDiff<maxDirDiff){
                                 rightPower = 1-(dirDiff/maxDirDiff);
                             }
+                            telemetry.addData("Vibration ", "Left:" + leftPower + " Right: " + rightPower);
                             gamepad1.rumble(leftPower, rightPower, 100);
                         } else {
+                            telemetry.addData("Vibration ", "Left:" + 0 + " Right: " + 0);
                             gamepad1.rumble(0, 0, 100);
                         }
 
@@ -226,7 +232,7 @@ public class TeleOpV4 extends LinearOpMode {
                         runningActions.add(new ParallelAction(
                                 score.build()
                         ));*/
-                    }
+                    //}
 
                 }
             }
