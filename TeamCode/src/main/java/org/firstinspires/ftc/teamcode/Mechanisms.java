@@ -66,8 +66,8 @@ public class Mechanisms {
         private CRServo intake;
         private boolean firstTime = false;
         private double timer = 0;
-        private final int intakeTime =50000;//40000;
-        private final int depositTime =60000;//40000;
+        private final int intakeTime =50000;//50000;
+        private final int depositTime =50000;//50000;
         //how many times it runs so that it will let it run for a bit before moving to the next action in auto
 
         private long starting = System.currentTimeMillis();
@@ -244,7 +244,7 @@ public class Mechanisms {
 
         }
         public boolean RunToPos(@NonNull TelemetryPacket packet) {
-            ((DcMotorEx) armMotor).setTargetPositionTolerance(100);
+            ((DcMotorEx) armMotor).setTargetPositionTolerance(50);
             armMotor.setTargetPosition(target+armPositionFudgeFactor);
             int tolerance = ((DcMotorEx) armMotor).getTargetPositionTolerance()+1;
             armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
