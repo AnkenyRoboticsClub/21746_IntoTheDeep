@@ -86,9 +86,9 @@ public class LeftAutoV7 extends LinearOpMode {
         TrajectoryActionBuilder getBlock3 = scoreBlock2.endTrajectory().fresh()
                 .afterTime(0.25, arm.armCollectLow())
                 .afterTime(0.2, intake.intakeOff())
-                .strafeToLinearHeading(new Vector2d(-54, -26.5), Math.toRadians(180))
+                .strafeToLinearHeading(new Vector2d(-54, -26), Math.toRadians(180))
                 .afterTime(0, intake.intakeCollect())
-                .strafeToLinearHeading(new Vector2d(-60.5, -26.5), Math.toRadians(180))
+                .strafeToLinearHeading(new Vector2d(-60.5, -26), Math.toRadians(180))
                 ;
 
         TrajectoryActionBuilder scoreBlock3 = getBlock3.endTrajectory().fresh()
