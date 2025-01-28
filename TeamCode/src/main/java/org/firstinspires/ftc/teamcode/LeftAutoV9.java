@@ -15,9 +15,9 @@ import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive;
 @Config
 //Need the autnomous tag in order for it show up on driver station as an autonomous program
 // You can also set the name of the autonomous and the group
-@Autonomous(name = "LeftV8Test", group = "Autonomous")
+@Autonomous(name = "LeftV9Test", group = "Autonomous")
 @Disabled
-public class LeftAutoV8 extends LinearOpMode {
+public class LeftAutoV9 extends LinearOpMode {
 
     @Override
     public void runOpMode() {
@@ -88,13 +88,12 @@ public class LeftAutoV8 extends LinearOpMode {
         TrajectoryActionBuilder getBlock3 = scoreBlock2.endTrajectory().fresh()
                 .afterTime(0.25, arm.armCollectLow())
                 .afterTime(0.2, intake.intakeOff())
-                .strafeToLinearHeading(new Vector2d(-54.5, -26), Math.toRadians(180))
+                .strafeToLinearHeading(new Vector2d(-54, -26), Math.toRadians(180))
                 .afterTime(0, intake.intakeCollect())
-                .strafeToLinearHeading(new Vector2d(-61, -26), Math.toRadians(180))
+                .strafeToLinearHeading(new Vector2d(-60.5, -26), Math.toRadians(180))
                 ;
 
         TrajectoryActionBuilder scoreBlock3 = getBlock3.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(-59, -26), Math.toRadians(180))
                 .afterTime(0, arm.armScoreHigh())
                 .afterTime(1, slide.armScoreHigh())
                 .strafeToLinearHeading(new Vector2d(-49.75, -49.75), Math.toRadians(225))
@@ -124,18 +123,21 @@ public class LeftAutoV8 extends LinearOpMode {
                         scorePreload.build(),
                         slide.armScoreHigh(),
                         intake.intakeDeposit(),
+                        slide.armReleaseHigh(),
                         //get 1st
                         getBlock1.build(),
                         intake.intakeOff(),
                         //score 1st
                         scoreBlock1.build(),
                         intake.intakeDeposit(),
+                        slide.armReleaseHigh(),
                         //get 2nd
                         getBlock2.build(),
                         intake.intakeOff(),
                         //score 2nd
                         scoreBlock2.build(),
                         intake.intakeDeposit(),
+                        slide.armReleaseHigh(),
                         slide.armCollapse(),
                         //get 3rd
                         getBlock3.build(),
@@ -143,6 +145,7 @@ public class LeftAutoV8 extends LinearOpMode {
                         //score 3rd
                         scoreBlock3.build(),
                         intake.intakeDeposit(),
+                        slide.armReleaseHigh(),
                         //park
                         park.build()
                 )

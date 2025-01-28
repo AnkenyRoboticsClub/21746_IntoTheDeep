@@ -87,9 +87,10 @@ public class Mechanisms {
                     timer = 0;
                     intake.setPower(1);
                     initialized = true;
-                    RobotLog.ii("DbgLog", "Init: Intake Collect");
-                    RobotLog.ii("DbgLog", "Intake Timer: "+timer);
+                    /*RobotLog.ii("DbgLog", "Init: Intake Collect");
+                    RobotLog.ii("DbgLog", "Intake Timer: "+timer);*/
                     starting = System.currentTimeMillis();
+                    currentTime = 0;
                 } else {
                     currentTime = System.currentTimeMillis()-starting;
                     timer++;
@@ -110,11 +111,12 @@ public class Mechanisms {
                     timer++;
 
                 }*/
-                if (timer>intakeTime) {
+                //if (timer>intakeTime) {
+                if (currentTime>1500){
                     //firstTime = false;
-                    RobotLog.ii("DbgLog", "End: Intake Collect");
+                    /*RobotLog.ii("DbgLog", "End: Intake Collect");
                     RobotLog.ii("DbgLog", "Intake Timer: "+timer);
-                    RobotLog.ii("DbgLog", "Time: "+ (currentTime));
+                    RobotLog.ii("DbgLog", "Time: "+ (currentTime));*/
                     timer = 0;
                     return false;
 
@@ -159,9 +161,10 @@ public class Mechanisms {
                     timer = 0;
                     intake.setPower(-0.75);
                     initialized = true;
-                    RobotLog.ii("DbgLog", "Init: Intake Deposit");
-                    RobotLog.ii("DbgLog", "Intake Timer: "+timer);
+                    /*RobotLog.ii("DbgLog", "Init: Intake Deposit");
+                    RobotLog.ii("DbgLog", "Intake Timer: "+timer);*/
                     starting = System.currentTimeMillis();
+                    currentTime = 0;
                 } else {
                     currentTime = System.currentTimeMillis()-starting;
                     timer++;
@@ -182,11 +185,12 @@ public class Mechanisms {
                     timer++;
                     //RobotLog.ii("DbgLog", "Intake Timer: "+timer);
                 }*/
-                if (timer>depositTime) {
+                //if (timer>depositTime) {
+                if (currentTime>900){
                     //firstTime = false;
-                    RobotLog.ii("DbgLog", "End: Intake Deposit");
+                    /*RobotLog.ii("DbgLog", "End: Intake Deposit");
                     RobotLog.ii("DbgLog", "Intake Timer: "+timer);
-                    RobotLog.ii("DbgLog", "Time: "+ (currentTime));
+                    RobotLog.ii("DbgLog", "Time: "+ (currentTime));*/
                     timer = 0;
                     return false;
 
@@ -455,7 +459,8 @@ public class Mechanisms {
         final int ARM_CLEAR_BARRIER         = -1000;
         final int ARM_SCORE_SPECIMEN        = -400;
         final int ARM_SCORE_SAMPLE_IN_LOW   = -10;
-        final int ARM_SCORE_SAMPLE_IN_HIGH   = -2500;
+        final int ARM_SCORE_SAMPLE_IN_HIGH   = -2800;//-2500
+        final int ARM_RELEASE_SAMPLE_IN_HIGH   = -2700;
         final int ARM_ATTACH_HANGING_HOOK   = 0;
         final int FUDGE_FACTOR = 300;
         //public Motor arm;
@@ -556,6 +561,25 @@ public class Mechanisms {
         }
         public Action armScoreHigh() {
             return new Slide.ArmScoreHigh();
+        }
+
+        public class ArmReleaseHigh implements Action {
+            // checks if the lift motor has been powered on
+            private boolean initialized = false;
+            // actions are formatted via telemetry packets as below
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                // powers on motor, if it is not on
+                if (!initialized) {
+                    target = ARM_RELEASE_SAMPLE_IN_HIGH;
+                    armMotor.setPower(power);
+                    initialized = true;
+                }
+                return RunToPos(packet);
+            }
+        }
+        public Action armReleaseHigh() {
+            return new Slide.ArmReleaseHigh();
         }
         public class ArmCollapse implements Action {
             // checks if the lift motor has been powered on

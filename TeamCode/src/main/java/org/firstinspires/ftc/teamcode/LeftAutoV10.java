@@ -6,7 +6,6 @@ import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
@@ -15,9 +14,8 @@ import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive;
 @Config
 //Need the autnomous tag in order for it show up on driver station as an autonomous program
 // You can also set the name of the autonomous and the group
-@Autonomous(name = "LeftV8Test", group = "Autonomous")
-@Disabled
-public class LeftAutoV8 extends LinearOpMode {
+@Autonomous(name = "LeftV10Test", group = "Autonomous")
+public class LeftAutoV10 extends LinearOpMode {
 
     @Override
     public void runOpMode() {
@@ -83,18 +81,21 @@ public class LeftAutoV8 extends LinearOpMode {
                 .afterTime(0, arm.armScoreHigh())
                 .afterTime(1, slide.armScoreHigh())
                 .strafeToLinearHeading(new Vector2d(-49.75, -49.75), Math.toRadians(225))
+                //.afterTime(0, intake.intakeDeposit())
+                ;
+        TrajectoryActionBuilder backupBlock2 = scoreBlock2.endTrajectory().fresh()
+                .strafeToLinearHeading(new Vector2d(-48, -48), Math.toRadians(225))
                 ;
 
-        TrajectoryActionBuilder getBlock3 = scoreBlock2.endTrajectory().fresh()
-                .afterTime(0.25, arm.armCollectLow())
+        TrajectoryActionBuilder getBlock3 = backupBlock2.endTrajectory().fresh()
+                .afterTime(0.1, arm.armCollectLow())
                 .afterTime(0.2, intake.intakeOff())
-                .strafeToLinearHeading(new Vector2d(-54.5, -26), Math.toRadians(180))
+                .strafeToLinearHeading(new Vector2d(-54, -26), Math.toRadians(180))
                 .afterTime(0, intake.intakeCollect())
-                .strafeToLinearHeading(new Vector2d(-61, -26), Math.toRadians(180))
+                .strafeToLinearHeading(new Vector2d(-60.5, -26), Math.toRadians(180))
                 ;
 
         TrajectoryActionBuilder scoreBlock3 = getBlock3.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(-59, -26), Math.toRadians(180))
                 .afterTime(0, arm.armScoreHigh())
                 .afterTime(1, slide.armScoreHigh())
                 .strafeToLinearHeading(new Vector2d(-49.75, -49.75), Math.toRadians(225))
@@ -136,6 +137,7 @@ public class LeftAutoV8 extends LinearOpMode {
                         //score 2nd
                         scoreBlock2.build(),
                         intake.intakeDeposit(),
+                        backupBlock2.build(),
                         slide.armCollapse(),
                         //get 3rd
                         getBlock3.build(),
