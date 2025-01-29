@@ -210,7 +210,7 @@ public class Mechanisms {
                         * 250047.0 / 4913.0 // This is the exact gear ratio of the 50.9:1 Yellow Jacket gearbox
                         * 100.0 / 20.0 // This is the external gear reduction, a 20T pinion gear that drives a 100T hub-mount gear
                         * 1/360.0; // we want ticks per degree, not per rotation
-        //values copied from TeleOpV3
+        //values copied from old TeleOp
         final int ARM_COLLAPSED_INTO_ROBOT  = 10;
         final int ARM_COLLECT               = (int) (17 * ARM_TICKS_PER_DEGREE);
         final int ARM_COLLECT_LOW           = (int) (0 * ARM_TICKS_PER_DEGREE);
