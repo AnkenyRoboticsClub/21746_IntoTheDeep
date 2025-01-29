@@ -72,7 +72,6 @@ public class Mechanisms {
 
         private long starting = System.currentTimeMillis();
         private long currentTime=0;
-
         public Intake(HardwareMap hardwareMap) {
             intake = hardwareMap.get(CRServo.class, "intake");
         }
