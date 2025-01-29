@@ -6,15 +6,17 @@ import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive;
 
 @Config
 //Need the autnomous tag in order for it show up on driver station as an autonomous program
 // You can also set the name of the autonomous and the group
-@Autonomous(name = "RightV2", group = "Autonomous")
-public class RightAutoV2 extends LinearOpMode {
+@Autonomous(name = "RightV3", group = "Autonomous")
+public class RightAutoV3 extends LinearOpMode {
 
     @Override
     public void runOpMode() {
@@ -47,6 +49,15 @@ public class RightAutoV2 extends LinearOpMode {
         //Mechanisms.Claw claw = new Mechanisms.Claw(hardwareMap);
         //Mechanisms.Lift lift = new Mechanisms.Lift(hardwareMap);
 
+        //init stuff from mechanism class
+        Mechanisms.Arm arm = new Mechanisms.Arm(hardwareMap);
+        Mechanisms.Intake intake = new Mechanisms.Intake(hardwareMap);
+        Mechanisms.Wrist wrist = new Mechanisms.Wrist(hardwareMap);
+        Mechanisms.Slide slide = new Mechanisms.Slide(hardwareMap);
+
+        arm.armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        slide.armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
         TrajectoryActionBuilder traj1 = drive.actionBuilder(initialPose)
                 .strafeToLinearHeading(new Vector2d(20+startX, 30+startY), Math.toRadians(-90))
                 .splineToLinearHeading(new Pose2d(20+startX, topY, Math.toRadians(-90)), Math.toRadians(90))
@@ -70,6 +81,10 @@ public class RightAutoV2 extends LinearOpMode {
         //run actions sequentially, so it will run each action in order
         Actions.runBlocking(
                 new SequentialAction(
+                        slide.armCollapse(),
+                        arm.armCollapse(),
+                        wrist.foldInWrist(),
+                        intake.intakeOff(),
                         traj1.build()
                 )
         );
