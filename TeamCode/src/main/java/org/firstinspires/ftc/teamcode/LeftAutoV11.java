@@ -89,7 +89,7 @@ public class LeftAutoV11 extends LinearOpMode {
 
         TrajectoryActionBuilder getBlock3 = backupBlock2.endTrajectory().fresh()
                 .afterTime(0, slide.armCollapse())
-                .afterTime(0.3, arm.armCollectLow())
+                .afterTime(1, arm.armCollectLow())
                 .afterTime(0.2, intake.intakeOff())
                 .strafeToLinearHeading(new Vector2d(-54, -26), Math.toRadians(180))
                 .afterTime(0, intake.intakeCollect())
