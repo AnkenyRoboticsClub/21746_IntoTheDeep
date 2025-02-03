@@ -246,8 +246,8 @@ public class TeleOpV4 extends LinearOpMode {
                 lazyImu.get().resetYaw();
             }
 
-            if (driver2.getButton(GamepadKeys.Button.START)){
-                slide.slideReset = slide.armMotor.getCurrentPosition();//-slide.target;
+            if (driver2.wasJustPressed(GamepadKeys.Button.START)){
+                slide.slideReset = slide.armMotor.getCurrentPosition()-slide.target;//-slide.target;
             }
 
                 if (driver2.getButton(GamepadKeys.Button.A)) {
@@ -353,13 +353,13 @@ public class TeleOpV4 extends LinearOpMode {
             /*call our mecanum drive function from ftclib using field centric control,
             if you want robotcentric, change "Field" to "Robot" and remove the imuValue variable,
             if you want exponential drive turned off, change the last variable to false*/
-            double xMult = 0.5;
-            double yMult = 0.5;
-            double rMult = 0.5;
+            double xMult = 1;
+            double yMult = 1;
+            double rMult = 1;
             if (driver1.getButton(GamepadKeys.Button.Y)){
-                xMult = 1;
-                yMult = 1;
-                rMult = 1;
+                xMult = 0.5;
+                yMult = 0.5;
+                rMult = 0.5;
             }
             /*if (!driver1.getButton(GamepadKeys.Button.DPAD_DOWN)) {
                 leftFront.setInverted(false);
