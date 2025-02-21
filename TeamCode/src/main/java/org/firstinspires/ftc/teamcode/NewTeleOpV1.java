@@ -4,6 +4,8 @@ import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
+import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.LazyImu;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
@@ -25,7 +27,7 @@ import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive;
 import java.util.ArrayList;
 import java.util.List;
 
-@TeleOp(name = "TeleOpV4", group = "TeleOp")
+@TeleOp(name = "TestTeleOpV1", group = "TeleOp")
 public class NewTeleOpV1 extends LinearOpMode {
     private List<Action> runningActions = new ArrayList<>();
     public LazyImu lazyImu;
@@ -115,11 +117,21 @@ public class NewTeleOpV1 extends LinearOpMode {
                             poseX = xin;
                             poseY = yin;
                         }
-                        double poseOrientation = lazyImu.get().getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+                        double poseOrientation = lazyImu.get().getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS)+Math.toRadians(90);
                         RobotLog.ii("DbgLog", "Pose Update Conversion" + "(x: " + (int) poseX + ", y: " + (int) poseY + ")");
                         drive.pose = new Pose2d(poseX, poseY, poseOrientation);
                     }
                 }
+            }
+
+            driverControlled = !driver1.getButton(GamepadKeys.Button.Y);
+            if (driver1.wasJustPressed(GamepadKeys.Button.Y)){
+                TrajectoryActionBuilder score = drive.actionBuilder(drive.pose)
+                        .strafeToLinearHeading(new Vector2d(-49.75, -49.75), Math.toRadians(225))
+                        ;
+                runningActions.add(new ParallelAction(
+                        score.build()
+                ));
             }
 
             driver1.readButtons();
