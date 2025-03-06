@@ -217,7 +217,7 @@ public class Mechanisms {
         final int ARM_CLEAR_BARRIER         = (int) (25 * ARM_TICKS_PER_DEGREE);
         final int ARM_SCORE_SPECIMEN        = (int) (64 * ARM_TICKS_PER_DEGREE);
         final int ARM_SCORE_SAMPLE_IN_LOW   = (int) (83 * ARM_TICKS_PER_DEGREE);
-        final int ARM_SCORE_SAMPLE_IN_HIGH   = (int) (87 * ARM_TICKS_PER_DEGREE);
+        final int ARM_SCORE_SAMPLE_IN_HIGH   = (int) (90 * ARM_TICKS_PER_DEGREE);//87
         final int ARM_ATTACH_HANGING_HOOK   = (int) (110 * ARM_TICKS_PER_DEGREE);
         final int ARM_HANG   = (int) (135 * ARM_TICKS_PER_DEGREE);
         final int ARM_WINCH_ROBOT           = (int) (10  * ARM_TICKS_PER_DEGREE);
@@ -493,7 +493,7 @@ public class Mechanisms {
         }
 
         public boolean RunToPos(@NonNull TelemetryPacket packet) {
-            ((DcMotorEx) armMotor).setTargetPositionTolerance(100);
+            ((DcMotorEx) armMotor).setTargetPositionTolerance(50);//100
             armMotor.setTargetPosition(target+armPositionFudgeFactor+slideReset);
             int tolerance = ((DcMotorEx) armMotor).getTargetPositionTolerance()+2;
             armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);

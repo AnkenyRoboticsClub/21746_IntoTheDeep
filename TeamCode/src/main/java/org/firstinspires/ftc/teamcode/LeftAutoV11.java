@@ -14,8 +14,8 @@ import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive;
 @Config
 //Need the autnomous tag in order for it show up on driver station as an autonomous program
 // You can also set the name of the autonomous and the group
-@Autonomous(name = "LeftV10", group = "Autonomous")
-public class LeftAutoV10 extends LinearOpMode {
+@Autonomous(name = "LeftV11Test", group = "Autonomous")
+public class LeftAutoV11 extends LinearOpMode {
 
     @Override
     public void runOpMode() {
@@ -88,7 +88,8 @@ public class LeftAutoV10 extends LinearOpMode {
                 ;
 
         TrajectoryActionBuilder getBlock3 = backupBlock2.endTrajectory().fresh()
-                .afterTime(0.1, arm.armCollectLow())
+                .afterTime(0, slide.armCollapse())
+                .afterTime(1, arm.armCollectLow())
                 .afterTime(0.2, intake.intakeOff())
                 .strafeToLinearHeading(new Vector2d(-54, -26), Math.toRadians(180))
                 .afterTime(0, intake.intakeCollect())
@@ -138,7 +139,6 @@ public class LeftAutoV10 extends LinearOpMode {
                         scoreBlock2.build(),
                         intake.intakeDeposit(),
                         backupBlock2.build(),
-                        slide.armCollapse(),
                         //get 3rd
                         getBlock3.build(),
                         intake.intakeOff(),
